@@ -10,3 +10,7 @@ Seeso Windows SDK
 
 ## Sample Demo Requirements
 * OpenCV
+
+
+* git lfs is required
+* https://git-lfs.github.com
