@@ -49,7 +49,7 @@ int main() {
   std::cout << "SeeSo Version: " << eye_tracker->getVersion() << std::endl;
 
   // authenticate
-  const char* license_key = "dev_ddfwj2tj1i9tjd7850daon39plhqy5kwdjcx7xoq";
+  const char* license_key = "PUT YOUR LICENSE KEY HERE";
   auto code = eye_tracker->initialize(license_key);
   if(code != 0) {
     std::cerr << "Failed to authenticate "
