@@ -8,8 +8,7 @@ Seeso Windows SDK
 * `opencv_world410.dll`
 
 ## Sample Demo Requirements
-* OpenCV
 * CMake >= 3.5
-
+* OpenCV (included in project)
 * git lfs is required
 * https://git-lfs.github.com
