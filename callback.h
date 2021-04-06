@@ -21,6 +21,7 @@ class Callback : public seeso::CallbackInterface {
 
  private:
   seeso::CoordConverter pc;
+  seeso::WindowsDisplayUtil wdu;
 };
 
 

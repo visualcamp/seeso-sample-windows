@@ -1,11 +1,13 @@
 
 #include "display.h"
+//#include "WinUser.h"
 
 #include "wtypes.h"
 #include "tchar.h"
 
 #include <memory>
 #include <type_traits>
+#include <iostream>
 
 #define SEP '\\'
 #define SEP_STR "\\"
@@ -115,6 +117,17 @@ bool WindowsDisplayUtil::init() {
   return isFoundOneMonitor;
 }
 
+std::pair<long, long> WindowsDisplayUtil::getWindowPosition() {
+    long x, y = 0;
+    HWND handle = FindWindowA(NULL, "camera");
+    RECT rect;
+    if( GetWindowRect( handle, &rect ) ) {
+        //std::cout << "in " << rect.left << " " << rect.top << " " << rect.right << " " << rect.bottom << std::endl;
+        x = rect.left;
+        y = rect.top;
+    }
+    return {x, y};
+}
 const DisplayInfo& WindowsDisplayUtil::getDisplay() const {
   return display;
 }
@@ -123,7 +136,7 @@ DisplayInfo& WindowsDisplayUtil::getDisplay() {
   return display;
 }
 
-bool GetMonitorSizeFromEDID(DISPLAY_DEVICE &ddMon, DWORD &Width, DWORD &Height) {
+    bool GetMonitorSizeFromEDID(DISPLAY_DEVICE &ddMon, DWORD &Width, DWORD &Height) {
 //    DISPLAY_DEVICE ddMon;
 //    ZeroMemory(&ddMon, sizeof(ddMon));
 //    ddMon.cb = sizeof(ddMon);
