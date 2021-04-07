@@ -14,7 +14,7 @@ void Callback::OnGaze(uint64_t timestamp, float x, float y,
     auto gazeOnScreenPos = pc.cameraToScreen(x, y);
     auto gazePoint = pc.screenToWindow(gazeOnScreenPos, winPos);
     std::cout << "gazePoint: " << gazePoint.first << ", " << gazePoint.second << std::endl;
-
+    if (view != nullptr) view->setPoint(gazePoint.first, gazePoint.second);
   } else {
     std::cout << "OnGaze not found: " << std::endl;
   }
@@ -31,4 +31,8 @@ void Callback::OnCalibrationNextPoint(float next_point_x, float next_point_y) {
 
 void Callback::OnCalibrationFinished(std::vector<float> calib_data) {
 
+}
+
+void Callback::registerView(const std::shared_ptr<seeso::View> &view) {
+  this->view = view;
 }

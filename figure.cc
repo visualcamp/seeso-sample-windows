@@ -2,7 +2,7 @@
 // Created by vcremote on 2021-04-06.
 //
 
-#include "Figure.h"
+#include "figure.h"
 //#include "opencv2/opencv.hpp"
 
 namespace seeso{

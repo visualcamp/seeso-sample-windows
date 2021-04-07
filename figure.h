@@ -5,7 +5,7 @@
 #ifndef SEESO_WINDOWS_FIGURE_H
 #define SEESO_WINDOWS_FIGURE_H
 #include "opencv2/opencv.hpp"
-#include "Figure.h"
+#include "figure.h"
 
 // D:\SeeSoSample-Windows\opencv\include\opencv2\opencv.hpp
 namespace seeso {
@@ -20,8 +20,8 @@ public:
     void setDefaultProps(const std::initializer_list<T>& il, int _thickness, int _line_type = cv::LINE_AA, int _shift = 0);
     std::tuple<int, cv::Scalar, int, int> getProps() const;
 
-
     virtual void drawOnImage(cv::Mat& image) = 0;
+
 protected:
     int thickness = 1;
     cv::Scalar color = {0, 0, 0};
