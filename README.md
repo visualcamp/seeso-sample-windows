@@ -13,7 +13,7 @@ Seeso Windows SDK
 * OpenCV (included in project)
 * git lfs is required
 * https://git-lfs.github.com
-* Bust be issued a license key in https://console.seeso.io/
+* Must be issued a license key in https://console.seeso.io/
 
 
 ## SeeSo Sample Build
