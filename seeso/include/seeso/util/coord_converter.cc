@@ -12,10 +12,16 @@ CoordConverter::CoordConverter(const DisplayInfo &display_info)
   ppmY = (float) winDisplay.heightPx / (float) winDisplay.heightMm;
 }
 
-std::pair<float, float> CoordConverter::cameraToScreen(float x, float y) {
+std::pair<long, long> CoordConverter::cameraToScreen(float x, float y) {
   x = ppmX * (x + camOrigin.getCameraOriginXMm());
   y = ppmY * -(y);
-  return {x, y};
+  return {(long)x, (long)y};
+}
+
+std::pair<long, long> CoordConverter::screenToWindow(std::pair<long, long> gazeOnScreenPos, std::pair<long, long> windowPos) {
+    long gazeXInWindow = gazeOnScreenPos.first - windowPos.first;
+    long gazeYInWindow = gazeOnScreenPos.second - windowPos.second;
+    return { gazeXInWindow, gazeYInWindow };
 }
 
 

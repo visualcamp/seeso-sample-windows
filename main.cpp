@@ -5,13 +5,13 @@
 #include <windows.h>
 
 #include <opencv2/opencv.hpp>
-
+#include <memory>
 #include "seeso/eye_tracker.h"
 #include "seeso/util/display.h"
 #include "seeso/util/coord_converter.h"
 
 #include "callback.h"
-
+#include "view.h"
 
 void printDisplays(const std::vector<seeso::DisplayInfo>& displays) {
   for(const auto& display : displays) {
@@ -59,6 +59,7 @@ int main() {
 
   // set callback
   auto callback = Callback(main_display);
+  // use callback in eyetracker.
   eye_tracker->setCallbackInterface(&callback);
 
   // opencv camera example
@@ -73,8 +74,10 @@ int main() {
   video.set(cv::CAP_PROP_FRAME_WIDTH, 640);
   video.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
   cv::Mat frame, input;
-  const char* window_name = "camera";
-  cv::namedWindow(window_name);
+  const char* window_name = "seesosample";
+  auto view = std::make_shared<seeso::View>(1280, 960, window_name);
+  // use view instance when the callback is called.
+  callback.registerView(view);
 
   for(;;) {
     video >> frame;
@@ -86,10 +89,15 @@ int main() {
         std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count(),
         input.data, input.cols, input.rows);
 
-    cv::imshow(window_name, frame);
-    if(cv::waitKey(1) == 27 /* ESC */ ) break;
+    // pass video frame. frame is an element for drawing the view.
+    view->setFrame(frame);
+    // Since we have all the elements, draw 'seesosample' window.
+    int key = view->draw();
+    if (key == 27) {
+      break;
+    }
   }
-  cv::destroyWindow(window_name);
+  view->closeWindow();
 
   // free dll after eye_tracker is destroyed
   eye_tracker.reset();

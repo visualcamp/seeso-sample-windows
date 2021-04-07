@@ -7,7 +7,8 @@ add_subdirectory(opencv)
 add_subdirectory(seeso)
 
 add_executable(seeso_windows main.cpp
-        callback.cc)
+        callback.cc
+        view.cc)
 
 target_link_libraries(seeso_windows PUBLIC opencv seeso)
 

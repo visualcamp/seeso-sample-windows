@@ -8,7 +8,15 @@ Seeso Windows SDK
 * `opencv_world410.dll`
 
 ## Sample Demo Requirements
-* CMake >= 3.5
+* OS : Windows 10
+* CMake >= 3.5 ([Download Link](https://cmake.org/download/))
 * OpenCV (included in project)
 * git lfs is required
 * https://git-lfs.github.com
+* Must be issued a license key in https://console.seeso.io/
+
+
+## SeeSo Sample Build
+* create 'cmake-build-debug' folder under project root
+* Build project using CMake
+* Run root/cmake-build-debug/seeso_windows.exe

@@ -12,7 +12,8 @@ class CoordConverter {
  public:
   explicit CoordConverter(const DisplayInfo &display_info);
 
-  std::pair<float, float> cameraToScreen(float x, float y);
+  std::pair<long, long> cameraToScreen(float x, float y);
+  std::pair<long, long> screenToWindow(std::pair<long, long> gazeOnScreenPos, std::pair<long, long> windowPos);
 
  private:
   float ppmX;
