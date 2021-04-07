@@ -122,7 +122,6 @@ std::pair<long, long> WindowsDisplayUtil::getWindowPosition() {
     HWND handle = FindWindowA(NULL, "camera");
     RECT rect;
     if( GetWindowRect( handle, &rect ) ) {
-        //std::cout << "in " << rect.left << " " << rect.top << " " << rect.right << " " << rect.bottom << std::endl;
         x = rect.left;
         y = rect.top;
     }
@@ -136,10 +135,7 @@ DisplayInfo& WindowsDisplayUtil::getDisplay() {
   return display;
 }
 
-    bool GetMonitorSizeFromEDID(DISPLAY_DEVICE &ddMon, DWORD &Width, DWORD &Height) {
-//    DISPLAY_DEVICE ddMon;
-//    ZeroMemory(&ddMon, sizeof(ddMon));
-//    ddMon.cb = sizeof(ddMon);
+bool GetMonitorSizeFromEDID(DISPLAY_DEVICE &ddMon, DWORD &Width, DWORD &Height) {
 
   //read edid
   bool result = false;
