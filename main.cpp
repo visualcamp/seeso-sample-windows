@@ -73,7 +73,7 @@ int main() {
   video.set(cv::CAP_PROP_FRAME_WIDTH, 640);
   video.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
   cv::Mat frame, input;
-  const char* window_name = "camera";
+  const char* window_name = "seesosample";
   auto view = std::make_shared<seeso::View>(1280, 960, window_name);
   callback.registerView(view);
 

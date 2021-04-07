@@ -1,6 +1,9 @@
-//
-// Created by cosge on 2021-03-25.
-//
+/**
+ * Written by Dean on 2021-04-07.
+ * 
+ * The function of the Callback class is registered in the'EyeTracker' class.
+ * When EyeTracker class initialized normally, each function of 'Callback' class is called in time.
+ * */
 
 #include "callback.h"
 #include <iostream>
@@ -18,19 +21,18 @@ void Callback::OnGaze(uint64_t timestamp, float x, float y,
   } else {
     std::cout << "OnGaze not found: " << std::endl;
   }
-
 }
 
 void Callback::OnCalibrationProgress(float progress) {
-
+  // Not yet implemented.
 }
 
 void Callback::OnCalibrationNextPoint(float next_point_x, float next_point_y) {
-
+  // Not yet implemented.
 }
 
 void Callback::OnCalibrationFinished(std::vector<float> calib_data) {
-
+  // Not yet implemented.
 }
 
 void Callback::registerView(const std::shared_ptr<seeso::View> &view) {

@@ -1,6 +1,10 @@
-//
-// Created by vcremote on 2021-04-07.
-//
+/**
+ * Written by Dean on 2021-04-07.
+ * 
+ * The View class is a class in charge of views in the software design pattern.
+ * Create and delete windows, draw camera frames and gaze points.
+ * 
+ * */
 
 #include "view.h"
 
@@ -22,10 +26,8 @@ void View::setFrame(cv::Mat frame) {
 
 int View::draw() {
   background = cv::Scalar(0,0,0);
-  //frame.copyTo(background(cv::Rect(640, 480, std::min(frame.cols, std::max(0, background.cols - 640)), std::min(frame.rows, std::max(0, background.rows - 480)))));
-  frame.copyTo(background(cv::Rect(0, 0, std::min(frame.cols, std::max(0, background.cols - 0)), std::min(frame.rows, std::max(0, background.rows - 0)))));
+  frame.copyTo(background(cv::Rect(0, 0, std::min(frame.cols, background.cols), std::min(frame.rows, background.rows))));
   cv::circle(background, point, 10, color, -1, cv::LINE_AA);
-  std::cout<<"window name "<<windowName<<std::endl;
   cv::imshow(windowName, background);
   int key = cv::waitKey(20);
   return key;
