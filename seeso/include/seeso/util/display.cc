@@ -117,9 +117,10 @@ bool WindowsDisplayUtil::init() {
   return isFoundOneMonitor;
 }
 
-std::pair<long, long> WindowsDisplayUtil::getWindowPosition() {
+std::pair<long, long> WindowsDisplayUtil::getWindowPosition(std::string windowName) {
     long x, y = 0;
-    HWND handle = FindWindowA(NULL, "camera");
+    const char * windowNameChar = windowName.c_str();
+    HWND handle = FindWindowA(NULL, windowNameChar);
     RECT rect;
     if( GetWindowRect( handle, &rect ) ) {
         x = rect.left;

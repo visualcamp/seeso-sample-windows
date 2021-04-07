@@ -27,7 +27,7 @@ std::vector<DisplayInfo> getDisplayLists();
 class WindowsDisplayUtil {
  public:
   bool init();
-  std::pair<long, long> getWindowPosition();
+  std::pair<long, long> getWindowPosition(std::string windowName);
 
   const DisplayInfo& getDisplay() const;
   DisplayInfo& getDisplay();

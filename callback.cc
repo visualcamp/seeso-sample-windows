@@ -13,11 +13,13 @@ Callback::Callback(const seeso::DisplayInfo &display): pc(display), wdu() {}
 void Callback::OnGaze(uint64_t timestamp, float x, float y,
                       seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state) {
   if (tracking_state == seeso::TrackingState::SUCCESS) {
-    auto winPos = wdu.getWindowPosition();
-    auto gazeOnScreenPos = pc.cameraToScreen(x, y);
-    auto gazePoint = pc.screenToWindow(gazeOnScreenPos, winPos);
-    std::cout << "gazePoint: " << gazePoint.first << ", " << gazePoint.second << std::endl;
-    if (view != nullptr) view->setPoint(gazePoint.first, gazePoint.second);
+    if (view != nullptr) {
+      auto winPos = wdu.getWindowPosition(view->getWindowName());
+      auto gazeOnScreenPos = pc.cameraToScreen(x, y);
+      auto gazePoint = pc.screenToWindow(gazeOnScreenPos, winPos);
+      std::cout << "gazePoint: " << gazePoint.first << ", " << gazePoint.second << std::endl;
+      view->setPoint(gazePoint.first, gazePoint.second);
+    }
   } else {
     std::cout << "OnGaze not found: " << std::endl;
   }

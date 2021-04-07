@@ -16,6 +16,7 @@ public:
   void setFrame(cv::Mat frame);
   int draw();
   void closeWindow();
+  std::string getWindowName();
 private:
   std::string windowName;
   cv::Point point;

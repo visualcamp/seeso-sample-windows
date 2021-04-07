@@ -26,7 +26,7 @@ void View::setFrame(cv::Mat frame) {
 
 int View::draw() {
   background = cv::Scalar(0,0,0);
-  frame.copyTo(background(cv::Rect(0, 0, std::min(frame.cols, background.cols), std::min(frame.rows, background.rows))));
+  frame.copyTo(background(cv::Rect(0, 0, std::min(frame.cols, background.cols - 0), std::min(frame.rows, background.rows - 0))));
   cv::circle(background, point, 10, color, -1, cv::LINE_AA);
   cv::imshow(windowName, background);
   int key = cv::waitKey(20);
@@ -35,6 +35,10 @@ int View::draw() {
 
 void View::closeWindow() {
   cv::destroyWindow(windowName);
+}
+
+std::string View::getWindowName() {
+  return windowName;
 }
 
 
