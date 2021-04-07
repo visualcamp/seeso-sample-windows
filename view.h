@@ -1,6 +1,10 @@
-//
-// Created by vcremote on 2021-04-07.
-//
+/**
+ * Written by Dean on 2021-04-07.
+ * 
+ * The View class is a class in charge of views in the software design pattern.
+ * Create and delete windows, draw camera frames and gaze points.
+ * 
+ * */
 
 #ifndef SEESO_WINDOWS_VIEW_H
 #define SEESO_WINDOWS_VIEW_H

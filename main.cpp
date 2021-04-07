@@ -59,6 +59,7 @@ int main() {
 
   // set callback
   auto callback = Callback(main_display);
+  // use callback in eyetracker.
   eye_tracker->setCallbackInterface(&callback);
 
   // opencv camera example
@@ -75,6 +76,7 @@ int main() {
   cv::Mat frame, input;
   const char* window_name = "seesosample";
   auto view = std::make_shared<seeso::View>(1280, 960, window_name);
+  // use view instance when the callback is called.
   callback.registerView(view);
 
   for(;;) {
@@ -87,7 +89,9 @@ int main() {
         std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count(),
         input.data, input.cols, input.rows);
 
+    // pass video frame. frame is an element for drawing the view.
     view->setFrame(frame);
+    // Since we have all the elements, draw 'seesosample' window.
     int key = view->draw();
     if (key == 27) {
       break;

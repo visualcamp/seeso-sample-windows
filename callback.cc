@@ -1,10 +1,3 @@
-/**
- * Written by Dean on 2021-04-07.
- * 
- * The function of the Callback class is registered in the'EyeTracker' class.
- * When EyeTracker class initialized normally, each function of 'Callback' class is called in time.
- * */
-
 #include "callback.h"
 #include <iostream>
 
@@ -14,10 +7,14 @@ void Callback::OnGaze(uint64_t timestamp, float x, float y,
                       seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state) {
   if (tracking_state == seeso::TrackingState::SUCCESS) {
     if (view != nullptr) {
+      // Get the left top position of the 'seesosample' window
       auto winPos = wdu.getWindowPosition(view->getWindowName());
+      // Convert the gaze xy point to a position on the screen.
       auto gazeOnScreenPos = pc.cameraToScreen(x, y);
+      // Convert the gazeOnScreenPos to the value in the 'seesosample' window.
       auto gazePoint = pc.screenToWindow(gazeOnScreenPos, winPos);
       std::cout << "gazePoint: " << gazePoint.first << ", " << gazePoint.second << std::endl;
+      // Pass to view to display in the seesosample window.
       view->setPoint(gazePoint.first, gazePoint.second);
     }
   } else {

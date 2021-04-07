@@ -1,6 +1,7 @@
-//
-// Created by cosge on 2021-03-25.
-//
+/**
+ * Written by Dean on 2021-04-07.
+ * When EyeTracker class is initialized normally, the overloaded functions of the 'Callback' class are called in time.
+ * */
 
 #ifndef SEESO_WINDOWS_CALLBACK_H
 #define SEESO_WINDOWS_CALLBACK_H
