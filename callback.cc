@@ -14,7 +14,7 @@ void Callback::OnGaze(uint64_t timestamp, float x, float y,
       // Convert the gazeOnScreenPos to the value in the 'seesosample' window.
       auto gazePoint = pc.screenToWindow(gazeOnScreenPos, winPos);
       std::cout << "gazePoint: " << gazePoint.first << ", " << gazePoint.second << std::endl;
-      // Pass to view to display in the seesosample window.
+      // Pass gazePoint. gazePoint is element for drawing the seesosample window.
       view->setPoint(gazePoint.first, gazePoint.second);
     }
   } else {
