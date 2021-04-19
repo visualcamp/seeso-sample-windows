@@ -20,7 +20,7 @@ set(OPENCV_BIN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/opencv/lib/x64/vc15/bin)
 # this script will work only if cmake version >= 3.5
 add_custom_command(TARGET seeso_windows PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-        "${SEESO_BIN_DIR}/seeso/seeso.dll"
+        "${SEESO_BIN_DIR}/seeso/seeso_core.dll"
         "${SEESO_BIN_DIR}/third-parties/libcrypto-1_1-x64.dll"
         "${SEESO_BIN_DIR}/third-parties/libcurl.dll"
         "${SEESO_BIN_DIR}/third-parties/libssl-1_1-x64.dll"

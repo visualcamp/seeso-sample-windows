@@ -19,8 +19,8 @@ class Callback : public seeso::CallbackInterface {
   void OnGaze(uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
               seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state) override;
 
-  void OnStatus(int32_t version, uint64_t timestamp, std::vector<float>& data) override;
-  void OnFace(int32_t version, uint64_t timestamp, std::vector<float>& data) override;
+  void OnStatus(int32_t version, uint64_t timestamp, std::vector<float> data) override;
+  void OnFace(int32_t version, uint64_t timestamp, std::vector<float> data) override;
 
   /*
   void OnAttention(float attention) override;

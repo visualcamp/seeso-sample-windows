@@ -29,7 +29,7 @@ class EyeTracker {
   ~EyeTracker();
 
   // init SeeSo object
-  int initialize(const std::string& license_key, std::vector<int> statusOptions);
+  int initialize(const std::string& license_key, const std::vector<int> &statusOptions);
   // destroy SeeSo object
   void deinitialize();
 
@@ -77,7 +77,7 @@ class EyeTracker {
   struct SeeSo {};
   SeeSo* wrapper = nullptr;
 
-  DFunction<SeeSo*(const char*, size_t, float, int32_t, int32_t, std::vector<int>)> dCreateSeeSo;
+  DFunction<SeeSo*(const char*, size_t, float, int32_t, int32_t, const int32_t*, int32_t)> dCreateSeeSo;
   DFunction<void(SeeSo*)> dDeleteSeeSo;
 
   DFunction<int(SeeSo*)> dDeinitEyeTracker;
@@ -89,14 +89,14 @@ class EyeTracker {
   DFunction<int(SeeSo*)> dStopCalibration;
   DFunction<int(SeeSo*, const float* data, size_t size)> dSetCalibrationData;
   DFunction<int(SeeSo*, void *callback_obj,
-                void(*on_gaze           )(void*, uint64_t, float, float, float, float, int, int),
-                void(*on_status         )(void*, int32_t, uint64_t, float*, int),
-                void(*on_face           )(void*, int32_t, uint64_t, float*, int),
+                void(*on_gaze           )(void*, uint64_t, float, float, float, float, int32_t, int32_t),
+                void(*on_status         )(void*, int32_t, uint64_t, const float*, int32_t),
+                void(*on_face           )(void*, int32_t, uint64_t, const float*, int32_t),
                 void(*calib_next_point  )(void*, float, float),
                 void(*calib_progress    )(void*, float),
-                void(*calib_finish      )(void*, float*, int))> dSetCallbackInterface;
+                void(*calib_finish      )(void*, const float*, int32_t))> dSetCallbackInterface;
   DFunction<int(SeeSo*)> dRemoveCallbackInterface;
-  DFunction<int(SeeSo*, int64_t, uint8_t*, int, int)> dAddFrame;
+  DFunction<int(SeeSo*, int64_t, uint8_t*, int32_t, int32_t)> dAddFrame;
   DFunction<int(SeeSo*)> dGetAuthorizationResult;
 };
 

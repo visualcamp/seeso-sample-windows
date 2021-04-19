@@ -28,11 +28,11 @@ class CallbackDispatcher {
 
   static void dispatchOnGaze(derived_type *obj, uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
                              int tracking_state, int eye_movement_state);
-  static void dispatchOnStatus(derived_type* obj, int32_t version, uint64_t timestamp, std::vector<float>& data);
-  static void dispatchOnFace(derived_type* obj, int32_t version, uint64_t timestamp, std::vector<float>& data);
+  static void dispatchOnStatus(derived_type* obj, int32_t version, uint64_t timestamp, const float* data, int32_t data_size);
+  static void dispatchOnFace(derived_type* obj, int32_t version, uint64_t timestamp, const float* data, int32_t data_size);
   static void dispatchOnCalibrationProgress(derived_type *obj, float progress);
   static void dispatchOnCalibrationNextPoint(derived_type *obj, float next_point_x, float next_point_y);
-  static void dispatchOnCalibrationFinished(derived_type *obj, std::vector<float>& data);
+  static void dispatchOnCalibrationFinished(derived_type *obj, const float* data, int32_t data_size);
 
 };
 
@@ -47,15 +47,15 @@ void CallbackDispatcher<Derived>::dispatchOnGaze(CallbackDispatcher<Derived>::de
 
 
 template<typename Derived>
-void CallbackDispatcher<Derived>::dispatchOnStatus(derived_type* obj, int32_t version, uint64_t timestamp, std::vector<float>& data) {
+void CallbackDispatcher<Derived>::dispatchOnStatus(derived_type* obj, int32_t version, uint64_t timestamp, const float* data, int32_t data_size) {
   static auto mfptr = &derived_type::OnStatus;
-  (obj->*mfptr)(version, timestamp, data);
+  (obj->*mfptr)(version, timestamp, {data, data + data_size});
 }
 
 template<typename Derived>
-void CallbackDispatcher<Derived>::dispatchOnFace(derived_type* obj, int32_t version, uint64_t timestamp, std::vector<float>& data) {
+void CallbackDispatcher<Derived>::dispatchOnFace(derived_type* obj, int32_t version, uint64_t timestamp, const float* data, int32_t data_size) {
   static auto mfptr = &derived_type::OnFace;
-  (obj->*mfptr)(version, timestamp, data);
+  (obj->*mfptr)(version, timestamp, {data, data + data_size});
 }
 
 template<typename Derived>
@@ -74,9 +74,9 @@ void CallbackDispatcher<Derived>::dispatchOnCalibrationNextPoint(CallbackDispatc
 
 template<typename Derived>
 void CallbackDispatcher<Derived>::dispatchOnCalibrationFinished(CallbackDispatcher<Derived>::derived_type* obj,
-                                                                std::vector<float>& data) {
+                                                                const float* data, int32_t data_size) {
   static auto mfptr = &derived_type::OnCalibrationFinished;
-  (obj->*mfptr)(data);
+  (obj->*mfptr)({data, data + data_size});
 }
 
 }

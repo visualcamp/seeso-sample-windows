@@ -38,7 +38,7 @@ int main() {
   auto& main_display = displays[0];
 
   std::unique_ptr<std::remove_pointer_t<HINSTANCE>, decltype(&FreeLibrary)>
-      hGetProcIDDLL = {LoadLibrary("seeso.dll"), FreeLibrary};
+      hGetProcIDDLL = {LoadLibrary("seeso_core.dll"), FreeLibrary};
   if (!hGetProcIDDLL) {
     std::cerr << "could not load the dynamic library seeso.dll"
                  " (Error code: " << GetLastError() << '\n';

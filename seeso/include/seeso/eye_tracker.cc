@@ -40,12 +40,12 @@ EyeTracker::EyeTracker(HINSTANCE procIDDLL)
   SET_DLL_SEESO_FUNCTION(procIDDLL, GetAuthorizationResult);
 }
 
-int EyeTracker::initialize(const std::string& license_key, std::vector<int> statusOptions) {
+int EyeTracker::initialize(const std::string& license_key, const std::vector<int> &statusOptions) {
   wrapper = dCreateSeeSo(license_key.c_str(), license_key.size(),
                          3.14f/4, /* camera fov */
                          3,       /* thread num */
                          0,        /* use GPU(Not supported on Windows) */
-                         statusOptions);
+                         statusOptions.data(), static_cast<int>(statusOptions.size()));
   auto internal_code = dGetAuthorizationResult(wrapper);
   if(internal_code != 0)
     return internal_code + 2;
@@ -92,14 +92,16 @@ void EyeTracker::setCalibrationData(const std::vector<float> &serialData) {
 }
 
 void EyeTracker::setCallbackInterface(CallbackInterface *callback_obj) {
+  using dispatcher_type = CallbackDispatcher<CallbackInterface>;
+
   dSetCallbackInterface(
       wrapper, callback_obj,
-      (void (*)(void *, uint64_t, float, float, float, float, int, int))&CallbackDispatcher<CallbackInterface>::dispatchOnGaze,
-      (void (*)(void *, int32_t, uint64_t, float*, int))&CallbackDispatcher<CallbackInterface>::dispatchOnStatus,
-      (void (*)(void *, int32_t, uint64_t, float*, int))&CallbackDispatcher<CallbackInterface>::dispatchOnFace,
-      (void (*)(void *, float, float))&CallbackDispatcher<CallbackInterface>::dispatchOnCalibrationNextPoint,
-      (void (*)(void *, float))&CallbackDispatcher<CallbackInterface>::dispatchOnCalibrationProgress,
-      (void (*)(void *, float *, int))&CallbackDispatcher<CallbackInterface>::dispatchOnCalibrationFinished);
+      (void (*)(void *, uint64_t, float, float, float, float, int32_t, int32_t))&dispatcher_type::dispatchOnGaze,
+      (void (*)(void *, int32_t, uint64_t, const float*, int32_t))&dispatcher_type::dispatchOnStatus,
+      (void (*)(void *, int32_t, uint64_t, const float*, int32_t))&dispatcher_type::dispatchOnFace,
+      (void (*)(void *, float, float))&dispatcher_type::dispatchOnCalibrationNextPoint,
+      (void (*)(void *, float))&dispatcher_type::dispatchOnCalibrationProgress,
+      (void (*)(void *, const float *, int32_t))&dispatcher_type::dispatchOnCalibrationFinished);
 }
 
 void EyeTracker::removeCallbackInterface() {

@@ -23,7 +23,7 @@ void Callback::OnGaze(uint64_t timestamp, float x, float y, float fixation_x, fl
   }
 }
 
-void Callback::OnStatus(int32_t version, uint64_t timestamp, std::vector<float>& data) {
+void Callback::OnStatus(int32_t version, uint64_t timestamp, std::vector<float> data) {
   float movement = data[0];
   float fixation = data[1];
   float EAR = data[2];
@@ -40,7 +40,7 @@ void Callback::OnStatus(int32_t version, uint64_t timestamp, std::vector<float>&
   std::cout << "Blink: " << blink << std::endl;
 }
 
-void Callback::OnFace(int32_t version, uint64_t timestamp, std::vector<float>& data) {
+void Callback::OnFace(int32_t version, uint64_t timestamp, std::vector<float> data) {
   // How should we display/use data?
 
 }
