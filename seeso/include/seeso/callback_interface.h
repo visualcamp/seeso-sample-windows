@@ -20,11 +20,40 @@ class CallbackInterface : private CallbackDispatcher<CallbackInterface> {
    * @param timestamp           timestamp (passed by EyeTracker::AddFrame())
    * @param x                   mm in x-axis (camera coordinate)
    * @param y                   mm in y-axis (camera coordinate)
+   * @param fixation_x          fixation x-axis
+   * @param fixation_y          fixation y-axis
    * @param tracking_state      tracking state
    * @param eye_movement_state  eye movement state
    */
-  virtual void OnGaze(uint64_t timestamp, float x, float y,
+  virtual void OnGaze(uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
                       TrackingState tracking_state, EyeMovementState eye_movement_state) = 0;
+
+ /** Status Callback
+ *
+ * @param version             version info
+ * @param timestamp           timestamp (passed by EyeTracker::AddFrame())
+ * @param data                status data vector
+ *                                eye movement = data[0];
+ *                                fixation = data[1];
+ *                                EAR = data[2];
+ *                                drowsiness = data[3];
+ *                                ECR = data[4];
+ *                                blink = data[5];
+ *                                attention = data[6];
+ *                                EAR Left = data[7];
+ *                                EAR Right = data[8];
+ *                                blink Right = data[9];
+ *                                blink Left = data[10];
+ */
+  virtual void OnStatus(int32_t version, uint64_t timestamp, std::vector<float>& data) = 0;
+
+  /** Face Callback
+ *
+ * @param version             version info
+ * @param timestamp           timestamp (passed by EyeTracker::AddFrame())
+ * @param data                face data vector
+ */
+  virtual void OnFace(int32_t version, uint64_t timestamp, std::vector<float>& data) = 0;
 
   /** Calibration Progress Callback
    * @brief called during each calibration process

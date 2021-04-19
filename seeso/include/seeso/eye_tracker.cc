@@ -40,12 +40,12 @@ EyeTracker::EyeTracker(HINSTANCE procIDDLL)
   SET_DLL_SEESO_FUNCTION(procIDDLL, GetAuthorizationResult);
 }
 
-int EyeTracker::initialize(const std::string& license_key) {
+int EyeTracker::initialize(const std::string& license_key, std::vector<int> statusOptions) {
   wrapper = dCreateSeeSo(license_key.c_str(), license_key.size(),
                          3.14f/4, /* camera fov */
                          3,       /* thread num */
-                         0        /* use GPU(Not supported on Windows) */
-                         );
+                         0,        /* use GPU(Not supported on Windows) */
+                         statusOptions);
   auto internal_code = dGetAuthorizationResult(wrapper);
   if(internal_code != 0)
     return internal_code + 2;
@@ -94,7 +94,9 @@ void EyeTracker::setCalibrationData(const std::vector<float> &serialData) {
 void EyeTracker::setCallbackInterface(CallbackInterface *callback_obj) {
   dSetCallbackInterface(
       wrapper, callback_obj,
-      (void (*)(void *, uint64_t, float, float, int, int))&CallbackDispatcher<CallbackInterface>::dispatchOnGaze,
+      (void (*)(void *, uint64_t, float, float, float, float, int, int))&CallbackDispatcher<CallbackInterface>::dispatchOnGaze,
+      (void (*)(void *, int32_t, uint64_t, float*, int))&CallbackDispatcher<CallbackInterface>::dispatchOnStatus,
+      (void (*)(void *, int32_t, uint64_t, float*, int))&CallbackDispatcher<CallbackInterface>::dispatchOnFace,
       (void (*)(void *, float, float))&CallbackDispatcher<CallbackInterface>::dispatchOnCalibrationNextPoint,
       (void (*)(void *, float))&CallbackDispatcher<CallbackInterface>::dispatchOnCalibrationProgress,
       (void (*)(void *, float *, int))&CallbackDispatcher<CallbackInterface>::dispatchOnCalibrationFinished);

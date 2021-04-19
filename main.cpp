@@ -9,6 +9,7 @@
 #include "seeso/eye_tracker.h"
 #include "seeso/util/display.h"
 #include "seeso/util/coord_converter.h"
+#include "seeso/values.h"
 
 #include "callback.h"
 #include "view.h"
@@ -50,7 +51,12 @@ int main() {
 
   // authenticate
   const char* license_key = "PUT YOUR LICENSE KEY HERE";
-  auto code = eye_tracker->initialize(license_key);
+
+  std::vector<int> statusOptions;
+  statusOptions.push_back(seeso::StatusOptions::STATUS_ATTENTION);
+  statusOptions.push_back(seeso::StatusOptions::STATUS_BLINK);
+  statusOptions.push_back(seeso::StatusOptions::STATUS_DROWSINESS);
+  auto code = eye_tracker->initialize(license_key, statusOptions);
   if(code != 0) {
     std::cerr << "Failed to authenticate "
               << "(code: " << code << ")\n";

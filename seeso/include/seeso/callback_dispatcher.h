@@ -26,20 +26,36 @@ class CallbackDispatcher {
  public:
   using derived_type = Derived;
 
-  static void dispatchOnGaze(derived_type *obj, uint64_t timestamp, float x, float y,
+  static void dispatchOnGaze(derived_type *obj, uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
                              int tracking_state, int eye_movement_state);
+  static void dispatchOnStatus(derived_type* obj, int32_t version, uint64_t timestamp, std::vector<float>& data);
+  static void dispatchOnFace(derived_type* obj, int32_t version, uint64_t timestamp, std::vector<float>& data);
   static void dispatchOnCalibrationProgress(derived_type *obj, float progress);
   static void dispatchOnCalibrationNextPoint(derived_type *obj, float next_point_x, float next_point_y);
-  static void dispatchOnCalibrationFinished(derived_type *obj, float *calib_data, int data_size);
+  static void dispatchOnCalibrationFinished(derived_type *obj, std::vector<float>& data);
 
 };
 
 template<typename Derived>
 void CallbackDispatcher<Derived>::dispatchOnGaze(CallbackDispatcher<Derived>::derived_type* obj,
                                                  uint64_t timestamp, float x, float y,
+                                                 float fixation_x, float fixation_y,
                                                  int tracking_state, int eye_movement_state) {
   static auto mfptr = &derived_type::OnGaze;
-  (obj->*mfptr)(timestamp, x, y, static_cast<TrackingState>(tracking_state), static_cast<EyeMovementState>(eye_movement_state));
+  (obj->*mfptr)(timestamp, x, y, fixation_x, fixation_y, static_cast<TrackingState>(tracking_state), static_cast<EyeMovementState>(eye_movement_state));
+}
+
+
+template<typename Derived>
+void CallbackDispatcher<Derived>::dispatchOnStatus(derived_type* obj, int32_t version, uint64_t timestamp, std::vector<float>& data) {
+  static auto mfptr = &derived_type::OnStatus;
+  (obj->*mfptr)(version, timestamp, data);
+}
+
+template<typename Derived>
+void CallbackDispatcher<Derived>::dispatchOnFace(derived_type* obj, int32_t version, uint64_t timestamp, std::vector<float>& data) {
+  static auto mfptr = &derived_type::OnFace;
+  (obj->*mfptr)(version, timestamp, data);
 }
 
 template<typename Derived>
@@ -58,10 +74,9 @@ void CallbackDispatcher<Derived>::dispatchOnCalibrationNextPoint(CallbackDispatc
 
 template<typename Derived>
 void CallbackDispatcher<Derived>::dispatchOnCalibrationFinished(CallbackDispatcher<Derived>::derived_type* obj,
-                                                                float *calib_data, int data_size) {
+                                                                std::vector<float>& data) {
   static auto mfptr = &derived_type::OnCalibrationFinished;
-  auto data_len = data_size / sizeof(float);
-  (obj->*mfptr)(std::vector<float>(calib_data, calib_data + data_len));
+  (obj->*mfptr)(data);
 }
 
 }

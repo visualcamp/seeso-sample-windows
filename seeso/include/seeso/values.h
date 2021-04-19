@@ -31,6 +31,12 @@ enum TargetNum {
   FIVE = 5,
 };
 
+enum StatusOptions {
+  STATUS_ATTENTION = 1,
+  STATUS_BLINK = 2,
+  STATUS_DROWSINESS = 3
+};
+
 }
 
 #endif //SEESO_VALUES_H_
