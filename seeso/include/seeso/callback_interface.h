@@ -11,7 +11,7 @@
 
 namespace seeso {
 
-class CallbackInterface : private CallbackDispatcher<CallbackInterface> {
+class CallbackInterface : private internal::CallbackDispatcher<CallbackInterface> {
  public:
   virtual ~CallbackInterface() = default;
 
@@ -45,7 +45,7 @@ class CallbackInterface : private CallbackDispatcher<CallbackInterface> {
  *                                blink Right = data[9];
  *                                blink Left = data[10];
  */
-  virtual void OnStatus(int32_t version, uint64_t timestamp, std::vector<float> data) = 0;
+  virtual void OnStatus(uint64_t timestamp, std::vector<float> data) = 0;
 
   /** Face Callback
  *
@@ -53,7 +53,7 @@ class CallbackInterface : private CallbackDispatcher<CallbackInterface> {
  * @param timestamp           timestamp (passed by EyeTracker::AddFrame())
  * @param data                face data vector
  */
-  virtual void OnFace(int32_t version, uint64_t timestamp, std::vector<float> data) = 0;
+  virtual void OnFace(uint64_t timestamp, std::vector<float> data) = 0;
 
   /** Calibration Progress Callback
    * @brief called during each calibration process
