@@ -68,36 +68,37 @@ class EyeTracker {
   void setCalibrationData(const std::vector<float> &serialData);
 
  private:
+  using dispatcher = internal::CallbackDispatcher<CallbackInterface>;
 
   int face_distance_mm = 600; // mm
 
   /** DLL functions **/
-  DFunction<const char*()> dGetVersion;
+  DLLFunction<const char*()> dGetVersion;
 
   struct SeeSo {};
   SeeSo* wrapper = nullptr;
 
-  DFunction<SeeSo*(const char*, size_t, float, int32_t, int32_t, const int32_t*, int32_t)> dCreateSeeSo;
-  DFunction<void(SeeSo*)> dDeleteSeeSo;
+  DLLFunction<SeeSo*(const char*, size_t, float, int32_t, int32_t, const int32_t*, int32_t)> dCreateSeeSo;
+  DLLFunction<void(SeeSo*)> dDeleteSeeSo;
 
-  DFunction<int(SeeSo*)> dDeinitEyeTracker;
-  DFunction<int(SeeSo*, int)> dSetTrackingFps;
-  DFunction<int(SeeSo*, float)> dSetCameraDistanceZ;
-  DFunction<int(SeeSo*, float, float, float, float)> dSetCalibrationRegion;
-  DFunction<int(SeeSo*, int, int)> dStartCalibration;
-  DFunction<int(SeeSo*)> dStartCollectSamples;
-  DFunction<int(SeeSo*)> dStopCalibration;
-  DFunction<int(SeeSo*, const float* data, size_t size)> dSetCalibrationData;
-  DFunction<int(SeeSo*, void *callback_obj,
-                void(*on_gaze           )(void*, uint64_t, float, float, float, float, int32_t, int32_t),
-                void(*on_status         )(void*, int32_t, uint64_t, const float*, int32_t),
-                void(*on_face           )(void*, int32_t, uint64_t, const float*, int32_t),
-                void(*calib_next_point  )(void*, float, float),
-                void(*calib_progress    )(void*, float),
-                void(*calib_finish      )(void*, const float*, int32_t))> dSetCallbackInterface;
-  DFunction<int(SeeSo*)> dRemoveCallbackInterface;
-  DFunction<int(SeeSo*, int64_t, uint8_t*, int32_t, int32_t)> dAddFrame;
-  DFunction<int(SeeSo*)> dGetAuthorizationResult;
+  DLLFunction<int(SeeSo*)> dDeinitEyeTracker;
+  DLLFunction<int(SeeSo*, int)> dSetTrackingFps;
+  DLLFunction<int(SeeSo*, float)> dSetCameraDistanceZ;
+  DLLFunction<int(SeeSo*, float, float, float, float)> dSetCalibrationRegion;
+  DLLFunction<int(SeeSo*, int, int)> dStartCalibration;
+  DLLFunction<int(SeeSo*)> dStartCollectSamples;
+  DLLFunction<int(SeeSo*)> dStopCalibration;
+  DLLFunction<int(SeeSo*, const float* data, size_t size)> dSetCalibrationData;
+  DLLFunction<int(SeeSo*, void *callback_obj,
+                  internal::dispatch_c_t<decltype(&dispatcher::dispatchOnGaze)> on_gaze,
+                  internal::dispatch_c_t<decltype(&dispatcher::dispatchOnStatus)> on_status,
+                  internal::dispatch_c_t<decltype(&dispatcher::dispatchOnFace)> on_face,
+                  internal::dispatch_c_t<decltype(&dispatcher::dispatchOnCalibrationNextPoint)> calib_next_point,
+                  internal::dispatch_c_t<decltype(&dispatcher::dispatchOnCalibrationProgress)> calib_progress,
+                  internal::dispatch_c_t<decltype(&dispatcher::dispatchOnCalibrationFinished)> calib_finish)> dSetCallbackInterface;
+  DLLFunction<int(SeeSo*)> dRemoveCallbackInterface;
+  DLLFunction<int(SeeSo*, int64_t, uint8_t*, int32_t, int32_t)> dAddFrame;
+  DLLFunction<int(SeeSo*)> dGetAuthorizationResult;
 };
 
 

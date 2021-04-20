@@ -16,11 +16,10 @@ d##name.setFuncPtr(GetProcAddress(hinst, "SeeSo"#name))
 namespace seeso {
 
 std::string EyeTracker::getVersion() const {
-  return std::string(dGetVersion());
+  return dGetVersion();
 }
 
 EyeTracker::EyeTracker(HINSTANCE procIDDLL)
-    : wrapper(nullptr)
 {
   SET_DLL_FUNCTION(procIDDLL, CreateSeeSo);
   SET_DLL_FUNCTION(procIDDLL, DeleteSeeSo);
@@ -92,16 +91,15 @@ void EyeTracker::setCalibrationData(const std::vector<float> &serialData) {
 }
 
 void EyeTracker::setCallbackInterface(CallbackInterface *callback_obj) {
-  using dispatcher_type = CallbackDispatcher<CallbackInterface>;
 
   dSetCallbackInterface(
       wrapper, callback_obj,
-      (void (*)(void *, uint64_t, float, float, float, float, int32_t, int32_t))&dispatcher_type::dispatchOnGaze,
-      (void (*)(void *, int32_t, uint64_t, const float*, int32_t))&dispatcher_type::dispatchOnStatus,
-      (void (*)(void *, int32_t, uint64_t, const float*, int32_t))&dispatcher_type::dispatchOnFace,
-      (void (*)(void *, float, float))&dispatcher_type::dispatchOnCalibrationNextPoint,
-      (void (*)(void *, float))&dispatcher_type::dispatchOnCalibrationProgress,
-      (void (*)(void *, const float *, int32_t))&dispatcher_type::dispatchOnCalibrationFinished);
+      internal::make_dispatch_c(&dispatcher::dispatchOnGaze),
+      internal::make_dispatch_c(&dispatcher::dispatchOnStatus),
+      internal::make_dispatch_c(&dispatcher::dispatchOnFace),
+      internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationNextPoint),
+      internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationProgress),
+      internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationFinished));
 }
 
 void EyeTracker::removeCallbackInterface() {
