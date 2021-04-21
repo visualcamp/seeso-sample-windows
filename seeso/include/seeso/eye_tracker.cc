@@ -45,6 +45,19 @@ int EyeTracker::initialize(const std::string& license_key, const std::vector<int
                          3,       /* thread num */
                          0,        /* use GPU(Not supported on Windows) */
                          statusOptions.data(), static_cast<int>(statusOptions.size()));
+
+  callback = CoreCallback();
+  callback.setStatusOptions(statusOptions);
+
+  dSetCallbackInterface(
+    wrapper, &callback,
+    internal::make_dispatch_c(&dispatcher::dispatchOnGaze),
+    internal::make_dispatch_c(&dispatcher::dispatchOnStatus),
+    internal::make_dispatch_c(&dispatcher::dispatchOnFace),
+    internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationNextPoint),
+    internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationProgress),
+    internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationFinished));
+
   auto internal_code = dGetAuthorizationResult(wrapper);
   if(internal_code != 0)
     return internal_code + 2;
@@ -91,19 +104,12 @@ void EyeTracker::setCalibrationData(const std::vector<float> &serialData) {
 }
 
 void EyeTracker::setCallbackInterface(CallbackInterface *callback_obj) {
-
-  dSetCallbackInterface(
-      wrapper, callback_obj,
-      internal::make_dispatch_c(&dispatcher::dispatchOnGaze),
-      internal::make_dispatch_c(&dispatcher::dispatchOnStatus),
-      internal::make_dispatch_c(&dispatcher::dispatchOnFace),
-      internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationNextPoint),
-      internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationProgress),
-      internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationFinished));
+  callback.setCallbackInterface(callback_obj);
 }
 
 void EyeTracker::removeCallbackInterface() {
   dRemoveCallbackInterface(wrapper);
+  callback;
 }
 
 bool EyeTracker::addFrame(int64_t time_stamp, uint8_t *buffer, int width, int height) {

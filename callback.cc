@@ -4,7 +4,7 @@
 Callback::Callback(const seeso::DisplayInfo &display): pc(display), wdu() {}
 
 
-void Callback::OnGaze(uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
+void Callback::OnGaze(uint64_t timestamp, float x, float y,
                       seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state) {
   if (tracking_state == seeso::TrackingState::SUCCESS) {
     if (view != nullptr) {
@@ -23,26 +23,17 @@ void Callback::OnGaze(uint64_t timestamp, float x, float y, float fixation_x, fl
   }
 }
 
-void Callback::OnStatus(uint64_t timestamp, std::vector<float> data) {
-  float movement = data[0];
-  float fixation = data[1];
-  float EAR = data[2];
-  float drowsiness = data[3];
-  float ECR = data[4];
-  float blink = data[5];
-  float attention = data[6];
-  float EARL = data[7];
-  float EARR= data[8];
-  float blinkR = data[9];
-  float blinkL = data[10];
-  std::cout << "Attention: " << attention << std::endl;
-  std::cout << "Drowsiness: " << drowsiness << std::endl;
-  std::cout << "Blink: " << blink << std::endl;
+void Callback::OnAttention(uint64_t timestamp, float attentionScore) {
+  std::cout << "Attention: " << attentionScore << std::endl;
 }
 
-void Callback::OnFace(uint64_t timestamp, std::vector<float> data) {
-  // How should we display/use data?
+void Callback::OnBlink(uint64_t timestamp, bool isBlinkLeft, bool isBlinkRight, bool isBlink, float eyeOpenness) {
+  std::cout << "Blink: " << isBlink << ", " << isBlinkLeft << ", " << isBlinkRight << std::endl;
+  std::cout << "EyeOpenness: " << eyeOpenness << std::endl;
+}
 
+void Callback::OnDrowsiness(uint64_t timestamp, bool isDrowsiness) {
+  std::cout << "Drowsiness: " << isDrowsiness << std::endl;
 }
 
 void Callback::OnCalibrationProgress(float progress) {
