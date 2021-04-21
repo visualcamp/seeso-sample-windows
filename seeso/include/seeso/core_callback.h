@@ -21,7 +21,7 @@ class CoreCallback : private internal::CallbackDispatcher<CoreCallback> {
   explicit CoreCallback();
 
   void OnGaze(uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
-    seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state);
+    int movement_duration, seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state);
 
   void OnStatus(uint64_t timestamp, std::vector<float> data);
   void OnFace(uint64_t timestamp, std::vector<float> data);

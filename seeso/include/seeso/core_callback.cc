@@ -9,7 +9,7 @@ CoreCallback::CoreCallback() {
 }
 
 void CoreCallback::OnGaze(uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
-                      seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state) {
+                          int movement_duration, seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state) {
   if (callback != nullptr) {
     callback->OnGaze(timestamp, x, y, tracking_state, eye_movement_state);
   }
