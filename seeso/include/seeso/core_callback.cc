@@ -1,18 +1,21 @@
 #include "core_callback.h"
 #include <iostream>
 
-seeso::CoreCallback::CoreCallback() {
+namespace seeso {
+
+
+CoreCallback::CoreCallback() {
  
 }
 
-void seeso::CoreCallback::OnGaze(uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
+void CoreCallback::OnGaze(uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
                       seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state) {
   if (callback != nullptr) {
     callback->OnGaze(timestamp, x, y, tracking_state, eye_movement_state);
   }
 }
 
-void seeso::CoreCallback::OnStatus(uint64_t timestamp, std::vector<float> data) {
+void CoreCallback::OnStatus(uint64_t timestamp, std::vector<float> data) {
   float movement = data[0];
   float fixation = data[1];
   float EAR = data[2];
@@ -40,35 +43,35 @@ void seeso::CoreCallback::OnStatus(uint64_t timestamp, std::vector<float> data) 
   }
 }
 
-void seeso::CoreCallback::OnFace(uint64_t timestamp, std::vector<float> data) {
+void CoreCallback::OnFace(uint64_t timestamp, std::vector<float> data) {
   // How should we display/use data?
   if (callback != nullptr) {
     // Not yet implemented
   }
 }
 
-void seeso::CoreCallback::OnCalibrationProgress(float progress) {
+void CoreCallback::OnCalibrationProgress(float progress) {
   // Not yet implemented.
   if (callback != nullptr) {
     callback->OnCalibrationProgress(progress);
   }
 }
 
-void seeso::CoreCallback::OnCalibrationNextPoint(float next_point_x, float next_point_y) {
+void CoreCallback::OnCalibrationNextPoint(float next_point_x, float next_point_y) {
   // Not yet implemented.
   if (callback != nullptr) {
     callback->OnCalibrationNextPoint(next_point_x, next_point_y);
   }
 }
 
-void seeso::CoreCallback::OnCalibrationFinished(std::vector<float> calib_data) {
+void CoreCallback::OnCalibrationFinished(std::vector<float> calib_data) {
   // Not yet implemented.
   if (callback != nullptr) {
     callback->OnCalibrationFinished(calib_data);
   }
 }
 
-void seeso::CoreCallback::setStatusOptions(const std::vector<int>& statusOptions) {
+void CoreCallback::setStatusOptions(const std::vector<int>& statusOptions) {
   isUseAttention = false;
   isUseBlink = false;
   isUseDrowsiness = false;
@@ -86,10 +89,12 @@ void seeso::CoreCallback::setStatusOptions(const std::vector<int>& statusOptions
   }
 }
 
-void seeso::CoreCallback::setCallbackInterface(seeso::CallbackInterface* callback_obj) {
+void CoreCallback::setCallbackInterface(seeso::CallbackInterface* callback_obj) {
   callback = callback_obj;
 }
 
-void seeso::CoreCallback::removeCallbackInterface() {
+void CoreCallback::removeCallbackInterface() {
   callback = nullptr;
 }
+
+}  // namespace seeso
