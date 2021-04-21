@@ -82,9 +82,10 @@ class EyeTracker {
   struct SeeSo {};
   SeeSo* wrapper = nullptr;
 
-  DLLFunction<SeeSo*(const char*, size_t, float, int32_t, int32_t, const int32_t*, int32_t)> dCreateSeeSo;
+  DLLFunction<SeeSo*(const char*, size_t)> dCreateSeeSo;
   DLLFunction<void(SeeSo*)> dDeleteSeeSo;
 
+  DLLFunction<int(SeeSo*, float, int32_t, int32_t, const int32_t*, uint32_t)> dInitEyeTracker;
   DLLFunction<int(SeeSo*)> dDeinitEyeTracker;
   DLLFunction<int(SeeSo*, int)> dSetTrackingFps;
   DLLFunction<int(SeeSo*, float)> dSetCameraDistanceZ;

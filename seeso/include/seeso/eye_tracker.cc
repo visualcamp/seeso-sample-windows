@@ -25,6 +25,7 @@ EyeTracker::EyeTracker(HINSTANCE procIDDLL)
   SET_DLL_FUNCTION(procIDDLL, DeleteSeeSo);
   SET_DLL_FUNCTION(procIDDLL, GetVersion);
 
+  SET_DLL_SEESO_FUNCTION(procIDDLL, InitEyeTracker);
   SET_DLL_SEESO_FUNCTION(procIDDLL, DeinitEyeTracker);
   SET_DLL_SEESO_FUNCTION(procIDDLL, SetTrackingFps);
   SET_DLL_SEESO_FUNCTION(procIDDLL, SetCameraDistanceZ);
@@ -40,27 +41,30 @@ EyeTracker::EyeTracker(HINSTANCE procIDDLL)
 }
 
 int EyeTracker::initialize(const std::string& license_key, const std::vector<int> &statusOptions) {
-  wrapper = dCreateSeeSo(license_key.c_str(), license_key.size(),
-                         3.14f/4, /* camera fov */
-                         3,       /* thread num */
-                         0,        /* use GPU(Not supported on Windows) */
-                         statusOptions.data(), static_cast<int>(statusOptions.size()));
-
-  callback = CoreCallback();
-  callback.setStatusOptions(statusOptions);
-
-  dSetCallbackInterface(
-    wrapper, &callback,
-    internal::make_dispatch_c(&dispatcher::dispatchOnGaze),
-    internal::make_dispatch_c(&dispatcher::dispatchOnStatus),
-    internal::make_dispatch_c(&dispatcher::dispatchOnFace),
-    internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationNextPoint),
-    internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationProgress),
-    internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationFinished));
+  wrapper = dCreateSeeSo(license_key.c_str(), license_key.size());
 
   auto internal_code = dGetAuthorizationResult(wrapper);
-  if(internal_code != 0)
+  if (internal_code != 0) {
     return internal_code + 2;
+  }
+  else {
+    dInitEyeTracker(wrapper, (3.14f / 4), /* camera fov */
+      3,       /* thread num */
+      0,        /* use GPU(Not supported on Windows) */
+      statusOptions.data(), static_cast<int>(statusOptions.size()));
+      
+    callback = CoreCallback();
+    callback.setStatusOptions(statusOptions);
+
+    dSetCallbackInterface(
+      wrapper, &callback,
+      internal::make_dispatch_c(&dispatcher::dispatchOnGaze),
+      internal::make_dispatch_c(&dispatcher::dispatchOnStatus),
+      internal::make_dispatch_c(&dispatcher::dispatchOnFace),
+      internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationNextPoint),
+      internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationProgress),
+      internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationFinished));
+  }
   return 0;
 }
 
