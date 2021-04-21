@@ -7,24 +7,28 @@
 #define SEESO_WINDOWS_CORE_CALLBACK_H
 
 #include <memory>
+#include <cstdint>
+#include "seeso/callback_dispatcher.h"
 #include "seeso/callback_interface.h"
-#include "seeso/core_callback_interface.h"
+//#include "seeso/core_callback_interface.h"
 #include "seeso/values.h"
-#include "seeso/util/coord_converter.h"
 
-class CoreCallback : public seeso::CoreCallbackInterface {
+namespace seeso {
+
+
+class CoreCallback : private internal::CallbackDispatcher<CoreCallback> {
  public:
   explicit CoreCallback();
 
   void OnGaze(uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
-    seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state) override;
+    seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state);
 
-  void OnStatus(uint64_t timestamp, std::vector<float> data) override;
-  void OnFace(uint64_t timestamp, std::vector<float> data) override;
+  void OnStatus(uint64_t timestamp, std::vector<float> data);
+  void OnFace(uint64_t timestamp, std::vector<float> data);
 
-  void OnCalibrationProgress(float progress) override;
-  void OnCalibrationNextPoint(float next_point_x, float next_point_y) override;
-  void OnCalibrationFinished(std::vector<float> calib_data) override;
+  void OnCalibrationProgress(float progress);
+  void OnCalibrationNextPoint(float next_point_x, float next_point_y);
+  void OnCalibrationFinished(std::vector<float> calib_data);
 
   void setStatusOptions(const std::vector<int>& statusOptions);
   void setCallbackInterface(seeso::CallbackInterface* callback_obj);
@@ -37,5 +41,6 @@ private:
   int isUseDrowsiness = false;
 };
 
+} // namespace seeso
 
 #endif //SEESO_WINDOWS_CORE_CALLBACK_H

@@ -14,7 +14,6 @@
 #include <string>
 #include <vector>
 #include "seeso/callback_interface.h"
-#include "seeso/core_callback_interface.h"
 #include "seeso/core_callback.h"
 #include "seeso/values.h"
 
@@ -71,7 +70,7 @@ class EyeTracker {
   void setCalibrationData(const std::vector<float> &serialData);
 
  private:
-  using dispatcher = internal::CallbackDispatcher<CoreCallbackInterface>;
+  using dispatcher = internal::CallbackDispatcher<CoreCallback>;
 
   int face_distance_mm = 600; // mm
 
