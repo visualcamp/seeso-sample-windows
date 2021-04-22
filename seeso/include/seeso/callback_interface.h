@@ -2,8 +2,8 @@
 // Created by cosge on 2021-03-25.
 //
 
-#ifndef SEESO_WINDOWS_CALLBACK_INTERFACE_H
-#define SEESO_WINDOWS_CALLBACK_INTERFACE_H
+#ifndef SEESO_CALLBACK_INTERFACE_H_
+#define SEESO_CALLBACK_INTERFACE_H_
 
 #include <cstdint>
 #include "seeso/callback_dispatcher.h"
@@ -98,4 +98,4 @@ class CallbackInterface : private internal::CallbackDispatcher<CallbackInterface
 
 } // namespace seeso
 
-#endif //SEESO_WINDOWS_CALLBACK_INTERFACE_H
+#endif //SEESO_CALLBACK_INTERFACE_H_

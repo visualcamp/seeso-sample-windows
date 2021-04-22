@@ -2,8 +2,8 @@
 // Created by cosge on 2021-03-26.
 //
 
-#ifndef SEESO_WINDOWS_CALLBACK_DISPATCHER_H
-#define SEESO_WINDOWS_CALLBACK_DISPATCHER_H
+#ifndef SEESO_CALLBACK_DISPATCHER_H_
+#define SEESO_CALLBACK_DISPATCHER_H_
 
 #include <cstdint>
 #include <vector>
@@ -118,4 +118,4 @@ dispatch_c_t<T> make_dispatch_c(T fptr) {
 } // namespace internal
 } // namespace seeso
 
-#endif //SEESO_WINDOWS_CALLBACK_DISPATCHER_H
+#endif //SEESO_CALLBACK_DISPATCHER_H_
