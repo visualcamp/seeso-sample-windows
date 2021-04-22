@@ -28,8 +28,11 @@ class CallbackDispatcher {
   using derived_type = Derived;
 
   static void
-  dispatchOnGaze(derived_type *obj, uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
-                 int tracking_state, int eye_movement_state);
+  dispatchOnGaze(derived_type *obj, uint64_t timestamp,
+                 float x, float y,
+                 float fixation_x, float fixation_y,
+                 int32_t movement_duration,
+                 int32_t tracking_state, int32_t eye_movement_state);
 
   static void
   dispatchOnStatus(derived_type *obj, int32_t version, uint64_t timestamp, const float* data, uint32_t data_size);
@@ -49,7 +52,8 @@ template<typename Derived>
 void CallbackDispatcher<Derived>::dispatchOnGaze(derived_type* obj,
                                                  uint64_t timestamp, float x, float y,
                                                  float fixation_x, float fixation_y,
-                                                 int tracking_state, int eye_movement_state) {
+                                                 int32_t movement_duration,
+                                                 int32_t tracking_state, int32_t eye_movement_state) {
   static auto mfptr = &derived_type::OnGaze;
   (obj->*mfptr)(timestamp, x, y, fixation_x, fixation_y, static_cast<TrackingState>(tracking_state),
                 static_cast<EyeMovementState>(eye_movement_state));
