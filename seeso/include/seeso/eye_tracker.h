@@ -2,17 +2,13 @@
 // Created by cosge on 2021-03-24.
 //
 
+#ifndef SEESO_EYE_TRACKER_H_
+#define SEESO_EYE_TRACKER_H_
+
 #include <vector>
 #include <string>
+
 #include "seeso/dll_function.h"
-
-//#include "window-callback.h"
-
-#ifndef UNTITLED1_EYE_TRACKER_H
-#define UNTITLED1_EYE_TRACKER_H
-
-#include <string>
-#include <vector>
 #include "seeso/callback_interface.h"
 #include "seeso/core_callback.h"
 #include "seeso/values.h"
@@ -88,9 +84,9 @@ class EyeTracker {
   DLLFunction<int(SeeSo*, float, int32_t, int32_t, const int32_t*, uint32_t)> dInitEyeTracker;
   DLLFunction<int(SeeSo*)> dDeinitEyeTracker;
   DLLFunction<int(SeeSo*, int)> dSetTrackingFps;
-  DLLFunction<int(SeeSo*, float)> dSetCameraDistanceZ;
-  DLLFunction<int(SeeSo*, float, float, float, float)> dSetCalibrationRegion;
-  DLLFunction<int(SeeSo*, int, int)> dStartCalibration;
+  DLLFunction<int(SeeSo*, float)> dSetFaceDistance;
+//  DLLFunction<int(SeeSo*, float, float, float, float)> dSetCalibrationRegion;
+  DLLFunction<int(SeeSo*, int, int, float, float, float, float)> dStartCalibration;
   DLLFunction<int(SeeSo*)> dStartCollectSamples;
   DLLFunction<int(SeeSo*)> dStopCalibration;
   DLLFunction<int(SeeSo*, const float* data, size_t size)> dSetCalibrationData;
@@ -110,4 +106,4 @@ class EyeTracker {
 } // namespace seeso
 
 
-#endif //UNTITLED1_EYE_TRACKER_H
+#endif //SEESO_EYE_TRACKER_H_

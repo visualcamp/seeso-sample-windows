@@ -2,16 +2,31 @@
 // Created by cosge on 2021-03-24.
 //
 
-#include "eye_tracker.h"
+#include "seeso/eye_tracker.h"
+
 #include <string>
 #include <vector>
+#include <stdexcept>
+#include <iostream>
+
 #include <windows.h>
 
+#define SET_DLL_FUNCTION_IMPL(hinst, target, name)  \
+do {                                                \
+  target.setFuncPtr(GetProcAddress(hinst, name));   \
+  if(target == nullptr) {                           \
+    std::cerr                                       \
+      << "Failed to find " name " from dll\n";      \
+    throw std::runtime_error(                       \
+      "Failed to find " name " from dll\n");        \
+  }                                                 \
+} while(false)
+
 #define SET_DLL_FUNCTION(hinst, name) \
-d##name.setFuncPtr(GetProcAddress(hinst, #name))
+  SET_DLL_FUNCTION_IMPL(hinst, d##name, #name)
 
 #define SET_DLL_SEESO_FUNCTION(hinst, name) \
-d##name.setFuncPtr(GetProcAddress(hinst, "SeeSo"#name))
+  SET_DLL_FUNCTION_IMPL(hinst, d##name, "SeeSo" #name)
 
 namespace seeso {
 
@@ -28,8 +43,8 @@ EyeTracker::EyeTracker(HINSTANCE procIDDLL)
   SET_DLL_SEESO_FUNCTION(procIDDLL, InitEyeTracker);
   SET_DLL_SEESO_FUNCTION(procIDDLL, DeinitEyeTracker);
   SET_DLL_SEESO_FUNCTION(procIDDLL, SetTrackingFps);
-  SET_DLL_SEESO_FUNCTION(procIDDLL, SetCameraDistanceZ);
-  SET_DLL_SEESO_FUNCTION(procIDDLL, SetCalibrationRegion);
+  SET_DLL_SEESO_FUNCTION(procIDDLL, SetFaceDistance);
+//  SET_DLL_SEESO_FUNCTION(procIDDLL, SetCalibrationRegion);
   SET_DLL_SEESO_FUNCTION(procIDDLL, StartCalibration);
   SET_DLL_SEESO_FUNCTION(procIDDLL, StartCollectSamples);
   SET_DLL_SEESO_FUNCTION(procIDDLL, StopCalibration);
@@ -41,7 +56,9 @@ EyeTracker::EyeTracker(HINSTANCE procIDDLL)
 }
 
 int EyeTracker::initialize(const std::string& license_key, const std::vector<int> &statusOptions) {
-  wrapper = dCreateSeeSo(license_key.c_str(), license_key.size());
+  if(wrapper == nullptr) {
+    wrapper = dCreateSeeSo(license_key.c_str(), license_key.size());
+  }
 
   auto internal_code = dGetAuthorizationResult(wrapper);
   if (internal_code != 0) {
@@ -49,21 +66,21 @@ int EyeTracker::initialize(const std::string& license_key, const std::vector<int
   }
   else {
     dInitEyeTracker(wrapper, (3.14f / 4), /* camera fov */
-      3,       /* thread num */
-      0,        /* use GPU(Not supported on Windows) */
-      statusOptions.data(), static_cast<int>(statusOptions.size()));
-      
+                    3,       /* thread num */
+                    0,        /* use GPU(Not supported on Windows) */
+                    statusOptions.data(), static_cast<int>(statusOptions.size()));
+
     callback = CoreCallback();
     callback.setStatusOptions(statusOptions);
 
     dSetCallbackInterface(
-      wrapper, &callback,
-      internal::make_dispatch_c(&dispatcher::dispatchOnGaze),
-      internal::make_dispatch_c(&dispatcher::dispatchOnStatus),
-      internal::make_dispatch_c(&dispatcher::dispatchOnFace),
-      internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationNextPoint),
-      internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationProgress),
-      internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationFinished));
+        wrapper, &callback,
+        internal::make_dispatch_c(&dispatcher::dispatchOnGaze),
+        internal::make_dispatch_c(&dispatcher::dispatchOnStatus),
+        internal::make_dispatch_c(&dispatcher::dispatchOnFace),
+        internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationNextPoint),
+        internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationProgress),
+        internal::make_dispatch_c(&dispatcher::dispatchOnCalibrationFinished));
   }
   return 0;
 }
@@ -82,7 +99,7 @@ void EyeTracker::setTrackingFps(int fps) {
 
 void EyeTracker::setFaceDistance(int cm) {
   face_distance_mm = cm * 10;
-  dSetCameraDistanceZ(wrapper, static_cast<float>(face_distance_mm));
+  dSetFaceDistance(wrapper, static_cast<float>(face_distance_mm));
 }
 
 int EyeTracker::getFaceDistance() const {
@@ -91,8 +108,7 @@ int EyeTracker::getFaceDistance() const {
 
 void EyeTracker::startCalibration(TargetNum num, CalibrationAccuracy criteria,
                                    float left, float top, float right, float bottom) {
-  dSetCalibrationRegion(wrapper, left, top, right, bottom);
-  dStartCalibration(wrapper, num, static_cast<int>(criteria));
+  dStartCalibration(wrapper, num, static_cast<int>(criteria), left, top, right, bottom);
 }
 
 void EyeTracker::startCollectSamples() {

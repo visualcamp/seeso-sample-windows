@@ -29,6 +29,9 @@ class DLLFunction<R(Args...)> {
   void setFuncPtr(fptr_type ptr) { fptr = ptr;             }
   void setFuncPtr(FARPROC ptr)   { fptr = (fptr_type)ptr;  }
 
+  bool operator == (std::nullptr_t) const { return fptr == nullptr; }
+  bool operator != (std::nullptr_t) const { return fptr != nullptr; }
+
  private:
   fptr_type fptr = nullptr;
 };
