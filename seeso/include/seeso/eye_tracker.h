@@ -85,7 +85,7 @@ class EyeTracker {
   DLLFunction<int(SeeSo*, float, int32_t, int32_t, const int32_t*, uint32_t)> dInitEyeTracker;
   DLLFunction<int(SeeSo*)> dDeinitEyeTracker;
   DLLFunction<int(SeeSo*, int)> dSetTrackingFps;
-  DLLFunction<int(SeeSo*, float)> dSetFaceDistance;
+  DLLFunction<int(SeeSo*, int)> dSetFaceDistance;
 //  DLLFunction<int(SeeSo*, float, float, float, float)> dSetCalibrationRegion;
   DLLFunction<int(SeeSo*, int, int, float, float, float, float)> dStartCalibration;
   DLLFunction<int(SeeSo*)> dStartCollectSamples;
