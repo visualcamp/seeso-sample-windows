@@ -11,6 +11,7 @@
 #include "seeso/dll_function.h"
 #include "seeso/callback_interface.h"
 #include "seeso/core_callback.h"
+#include "seeso/user_status_option.h"
 #include "seeso/values.h"
 
 namespace seeso {
@@ -26,7 +27,7 @@ class EyeTracker {
   ~EyeTracker();
 
   // init SeeSo object
-  int initialize(const std::string& license_key, const std::vector<int> &statusOptions);
+  int initialize(const std::string& license_key, UserStatusOption &userStatusOption);
   // destroy SeeSo object
   void deinitialize();
 

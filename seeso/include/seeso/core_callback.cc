@@ -34,11 +34,27 @@ void CoreCallback::OnStatus(uint64_t timestamp, std::vector<float> data) {
     }
 
     if (isUseDrowsiness) {
-      callback->OnDrowsiness(timestamp, drowsiness);
+      bool isDrowsiness = false;
+      if (drowsiness >= 1.0f) {
+        isDrowsiness = true;
+      }
+      callback->OnDrowsiness(timestamp, isDrowsiness);
     }
 
     if (isUseBlink) {
-      callback->OnBlink(timestamp, blinkL, blinkR, blink, EAR);
+      bool isBlinkLeft = false;
+      if (blinkL >= 1.0f) {
+        isBlinkLeft = true;
+      }
+      bool isBlinkRight = false;
+      if (blinkR >= 1.0f) {
+        isBlinkRight = true;
+      }
+      bool isBlink = false;
+      if (blink >= 1.0f) {
+        isBlink = true;
+      }
+      callback->OnBlink(timestamp, isBlinkLeft, isBlinkRight, isBlink, EAR);
     } 
   }
 }

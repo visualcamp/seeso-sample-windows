@@ -55,9 +55,21 @@ EyeTracker::EyeTracker(HINSTANCE procIDDLL)
   SET_DLL_SEESO_FUNCTION(procIDDLL, GetAuthorizationResult);
 }
 
-int EyeTracker::initialize(const std::string& license_key, const std::vector<int> &statusOptions) {
+int EyeTracker::initialize(const std::string& license_key, UserStatusOption& userStatusOption) {
   if(wrapper == nullptr) {
     wrapper = dCreateSeeSo(license_key.c_str(), license_key.size());
+  }
+
+  std::vector<int> statusOptions;
+
+  if (userStatusOption.getUseAttention()) {
+    statusOptions.push_back(StatusOptions::STATUS_ATTENTION);
+  }
+  if (userStatusOption.getUseBlink()) {
+    statusOptions.push_back(StatusOptions::STATUS_BLINK);
+  }
+  if (userStatusOption.getUseDrowsiness()) {
+    statusOptions.push_back(StatusOptions::STATUS_DROWSINESS);
   }
 
   auto internal_code = dGetAuthorizationResult(wrapper);

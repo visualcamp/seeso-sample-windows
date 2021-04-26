@@ -23,8 +23,8 @@ void Callback::OnGaze(uint64_t timestamp, float x, float y,
   }
 }
 
-void Callback::OnAttention(uint64_t timestamp, float attentionScore) {
-  std::cout << "Attention: " << attentionScore << std::endl;
+void Callback::OnAttention(uint64_t timestamp, float score) {
+  std::cout << "Attention: " << score << std::endl;
 }
 
 void Callback::OnBlink(uint64_t timestamp, bool isBlinkLeft, bool isBlinkRight, bool isBlink, float eyeOpenness) {

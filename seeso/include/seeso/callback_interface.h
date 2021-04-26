@@ -28,10 +28,10 @@ class CallbackInterface {
 
  /** Attention Status Callback
  *
- * @param timestamp           timestamp (passed by EyeTracker::AddFrame())
- * @param attentionScore      Attention rate score (0.0f ~ 1.0f)
+ * @param timestamp          timestamp (passed by EyeTracker::AddFrame())
+ * @param score              Attention rate score (0.0f ~ 1.0f)
  */
-  virtual void OnAttention(uint64_t timestamp, float attentionScore) = 0;
+  virtual void OnAttention(uint64_t timestamp, float score) = 0;
 
   /** Drowsiness Status Callback
 *
