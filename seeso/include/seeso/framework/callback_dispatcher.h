@@ -2,12 +2,13 @@
 // Created by cosge on 2021-03-26.
 //
 
-#ifndef SEESO_CALLBACK_DISPATCHER_H_
-#define SEESO_CALLBACK_DISPATCHER_H_
+#ifndef SEESO_FRAMEWORK_CALLBACK_DISPATCHER_H_
+#define SEESO_FRAMEWORK_CALLBACK_DISPATCHER_H_
 
 #include <cstdint>
 #include <vector>
-#include "seeso/values.h"
+
+#include "seeso/framework/values.h"
 
 namespace seeso {
 namespace internal {
@@ -50,13 +51,18 @@ class CallbackDispatcher {
 
 template<typename Derived>
 void CallbackDispatcher<Derived>::dispatchOnGaze(derived_type* obj,
-                                                 uint64_t timestamp, float x, float y,
+                                                 uint64_t timestamp,
+                                                 float x, float y,
                                                  float fixation_x, float fixation_y,
                                                  int32_t movement_duration,
                                                  int32_t tracking_state, int32_t eye_movement_state) {
   static auto mfptr = &derived_type::OnGaze;
-  (obj->*mfptr)(timestamp, x, y, fixation_x, fixation_y, movement_duration, static_cast<TrackingState>(tracking_state),
-                static_cast<EyeMovementState>(eye_movement_state));
+  (obj->*mfptr)(timestamp,
+      x, y,
+      fixation_x, fixation_y,
+      movement_duration,
+      static_cast<TrackingState>(tracking_state),
+      static_cast<EyeMovementState>(eye_movement_state));
 }
 
 
@@ -118,4 +124,4 @@ dispatch_c_t<T> make_dispatch_c(T fptr) {
 } // namespace internal
 } // namespace seeso
 
-#endif //SEESO_CALLBACK_DISPATCHER_H_
+#endif //SEESO_FRAMEWORK_CALLBACK_DISPATCHER_H_

@@ -2,8 +2,8 @@
 // Created by YongGyu Lee on 2021-03-24.
 //
 
-#ifndef SEESO_DLL_FUNCTION_H_
-#define SEESO_DLL_FUNCTION_H_
+#ifndef SEESO_UTIL_DLL_FUNCTION_H_
+#define SEESO_UTIL_DLL_FUNCTION_H_
 
 #include <type_traits>
 #include <windows.h>
@@ -26,6 +26,12 @@ class DLLFunction<R(Args...)> {
   return_type operator()(Args... args)       { return fptr(args...); }
   return_type operator()(Args... args) const { return fptr(args...); }
 
+  template<typename ...Args2>
+  return_type operator()(Args2... args) {
+//    static_assert(false, "");
+    return fptr(static_cast<Args>(args)...);
+  }
+
   void setFuncPtr(fptr_type ptr) { fptr = ptr;             }
   void setFuncPtr(FARPROC ptr)   { fptr = (fptr_type)ptr;  }
 
@@ -36,6 +42,6 @@ class DLLFunction<R(Args...)> {
   fptr_type fptr = nullptr;
 };
 
-}
+} // namespace seeso
 
-#endif //SEESO_DLL_FUNCTION_H_
+#endif //SEESO_UTIL_DLL_FUNCTION_H_

@@ -44,7 +44,7 @@ void Callback::OnCalibrationNextPoint(float next_point_x, float next_point_y) {
   // Not yet implemented.
 }
 
-void Callback::OnCalibrationFinished(std::vector<float> calib_data) {
+void Callback::OnCalibrationFinish(const std::vector<float>& calib_data) {
   // Not yet implemented.
 }
 

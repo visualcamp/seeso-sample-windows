@@ -6,13 +6,22 @@
 #ifndef SEESO_WINDOWS_CALLBACK_H
 #define SEESO_WINDOWS_CALLBACK_H
 
-#include <memory>
-#include "seeso/callback_interface.h"
+#include "seeso/callback/igaze_callback.h"
+#include "seeso/callback/icalibration_callback.h"
+#include "seeso/callback/istatus_callback.h"
 #include "seeso/util/display.h"
 #include "seeso/util/coord_converter.h"
+
 #include "view.h"
 
-class Callback : public seeso::CallbackInterface {
+#include <memory>
+#include <vector>
+
+class Callback :
+    public seeso::IGazeCallback,
+    public seeso::ICalibrationCallback,
+    public seeso::IStatusCallback
+{
  public:
   explicit Callback(const seeso::DisplayInfo &display);
 
@@ -25,7 +34,7 @@ class Callback : public seeso::CallbackInterface {
 
   void OnCalibrationProgress(float progress) override;
   void OnCalibrationNextPoint(float next_point_x, float next_point_y) override;
-  void OnCalibrationFinished(std::vector<float> calib_data) override;
+  void OnCalibrationFinish(const std::vector<float>& calib_data) override;
   void registerView(const std::shared_ptr<seeso::View> &view);
 
  private:

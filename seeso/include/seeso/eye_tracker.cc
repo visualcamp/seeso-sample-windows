@@ -3,13 +3,16 @@
 //
 
 #include "seeso/eye_tracker.h"
+#include "seeso/util/dll_function.h"
 
 #include <string>
 #include <vector>
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 
 #include <windows.h>
+
+#include "seeso/framework/dll_export.h"
 
 #define SET_DLL_FUNCTION_IMPL(hinst, target, name)  \
 do {                                                \
@@ -23,28 +26,63 @@ do {                                                \
 } while(false)
 
 #define SET_DLL_FUNCTION(hinst, name) \
-  SET_DLL_FUNCTION_IMPL(hinst, d##name, #name)
+  SET_DLL_FUNCTION_IMPL(hinst, dll::name, #name)
 
 #define SET_DLL_SEESO_FUNCTION(hinst, name) \
-  SET_DLL_FUNCTION_IMPL(hinst, d##name, "SeeSo" #name)
+  SET_DLL_FUNCTION_IMPL(hinst, dll::SeeSo##name, "SeeSo" #name)
+
+#define CREATE_DLL_FUNC(name) \
+  DLLFunction<decltype(name)> d##name
+
+#define CAST_OBJ(ptr) static_cast<SeeSoObject*>(ptr)
 
 namespace seeso {
 
-std::string EyeTracker::getVersion() const {
-  return dGetVersion();
-}
+namespace dll {
+namespace {
 
-EyeTracker::EyeTracker(HINSTANCE procIDDLL)
-{
+DLLFunction<decltype(GetSeeSoVersionString)>        GetSeeSoVersionString;
+DLLFunction<decltype(GetSeeSoVersionNumber)>        GetSeeSoVersionNumber;
+
+DLLFunction<decltype(CreateSeeSo)>                  CreateSeeSo;
+DLLFunction<decltype(DeleteSeeSo)>                  DeleteSeeSo;
+
+DLLFunction<decltype(SeeSoInitEyeTracker)>          SeeSoInitEyeTracker;
+DLLFunction<decltype(SeeSoDeinitEyeTracker)>        SeeSoDeinitEyeTracker;
+DLLFunction<decltype(SeeSoSetTrackingFps)>          SeeSoSetTrackingFps;
+DLLFunction<decltype(SeeSoSetFaceDistance)>         SeeSoSetFaceDistance;
+DLLFunction<decltype(SeeSoSetFixationCount)>        SeeSoSetFixationCount;
+DLLFunction<decltype(SeeSoSetFilterType)>           SeeSoSetFilterType;
+DLLFunction<decltype(SeeSoStartCalibration)>        SeeSoStartCalibration;
+DLLFunction<decltype(SeeSoStartCollectSamples)>     SeeSoStartCollectSamples;
+DLLFunction<decltype(SeeSoStopCalibration)>         SeeSoStopCalibration;
+DLLFunction<decltype(SeeSoSetCalibrationData)>      SeeSoSetCalibrationData;
+DLLFunction<decltype(SeeSoSetCallbackInterface)>    SeeSoSetCallbackInterface;
+DLLFunction<decltype(SeeSoRemoveCallbackInterface)> SeeSoRemoveCallbackInterface;
+DLLFunction<decltype(SeeSoAddFrame)>                SeeSoAddFrame;
+DLLFunction<decltype(SeeSoGetAuthorizationResult)>  SeeSoGetAuthorizationResult;
+
+}
+} // namespace dll
+
+void global_init(const char* file) {
+
+  auto procIDDLL = LoadLibrary(file);
+  if(procIDDLL == NULL) {
+    std::cerr << "Failed to load " << file << '\n';
+    throw std::runtime_error(std::string("Failed to load ") + file);
+  }
+
   SET_DLL_FUNCTION(procIDDLL, CreateSeeSo);
   SET_DLL_FUNCTION(procIDDLL, DeleteSeeSo);
-  SET_DLL_FUNCTION(procIDDLL, GetVersion);
+  SET_DLL_FUNCTION(procIDDLL, GetSeeSoVersionString);
+  SET_DLL_FUNCTION(procIDDLL, GetSeeSoVersionNumber);
 
   SET_DLL_SEESO_FUNCTION(procIDDLL, InitEyeTracker);
   SET_DLL_SEESO_FUNCTION(procIDDLL, DeinitEyeTracker);
   SET_DLL_SEESO_FUNCTION(procIDDLL, SetTrackingFps);
   SET_DLL_SEESO_FUNCTION(procIDDLL, SetFaceDistance);
-//  SET_DLL_SEESO_FUNCTION(procIDDLL, SetCalibrationRegion);
+
   SET_DLL_SEESO_FUNCTION(procIDDLL, StartCalibration);
   SET_DLL_SEESO_FUNCTION(procIDDLL, StartCollectSamples);
   SET_DLL_SEESO_FUNCTION(procIDDLL, StopCalibration);
@@ -53,39 +91,54 @@ EyeTracker::EyeTracker(HINSTANCE procIDDLL)
   SET_DLL_SEESO_FUNCTION(procIDDLL, RemoveCallbackInterface);
   SET_DLL_SEESO_FUNCTION(procIDDLL, AddFrame);
   SET_DLL_SEESO_FUNCTION(procIDDLL, GetAuthorizationResult);
+
+  static_assert(std::is_same<decltype(CreateSeeSo), SeeSoObject*(const char*, uint32_t)>::value, "");
 }
 
-int EyeTracker::initialize(const std::string& license_key, const UserStatusOption& userStatusOption) {
-  if(wrapper == nullptr) {
-    wrapper = dCreateSeeSo(license_key.c_str(), license_key.size());
+std::string getVersionStr() {
+  return dll::GetSeeSoVersionString();
+}
+
+int32_t getVersionInt() {
+  return dll::GetSeeSoVersionNumber();
+}
+
+
+// EyeTracker
+
+int EyeTracker::initialize(const std::string& license_key, const UserStatusOption& options) {
+  if(seeso_object == nullptr) {
+    seeso_object = dll::CreateSeeSo(license_key.c_str(), static_cast<uint32_t>(license_key.size()));
   }
 
-  std::vector<int> statusOptions;
-  if (userStatusOption.getUseAttention()) {
+  std::vector<int32_t> statusOptions;
+  if (options.getUseAttention()) {
     statusOptions.push_back(StatusOptions::STATUS_ATTENTION);
   }
-  if (userStatusOption.getUseBlink()) {
+  if (options.getUseBlink()) {
     statusOptions.push_back(StatusOptions::STATUS_BLINK);
   }
-  if (userStatusOption.getUseDrowsiness()) {
+  if (options.getUseDrowsiness()) {
     statusOptions.push_back(StatusOptions::STATUS_DROWSINESS);
   }
 
-  auto internal_code = dGetAuthorizationResult(wrapper);
-  if (internal_code != 0) {
+  auto internal_code = dll::SeeSoGetAuthorizationResult(CAST_OBJ(seeso_object));
+  if(internal_code != 0)
     return internal_code + 2;
-  }
   else {
-    dInitEyeTracker(wrapper, (3.14f / 4), /* camera fov */
-                    3,       /* thread num */
-                    0,        /* use GPU(Not supported on Windows) */
-                    statusOptions.data(), static_cast<int>(statusOptions.size()));
+    dll::SeeSoInitEyeTracker(
+        CAST_OBJ(seeso_object),
+        3.14f / 4.f,
+        3,
+        0,
+        statusOptions.data(), static_cast<uint32_t>(statusOptions.size()));
 
     callback = CoreCallback();
     callback.setStatusOptions(statusOptions);
 
-    dSetCallbackInterface(
-        wrapper, &callback,
+    using dispatcher = internal::CallbackDispatcher<CoreCallback>;
+    dll::SeeSoSetCallbackInterface(
+        CAST_OBJ(seeso_object), &callback,
         internal::make_dispatch_c(&dispatcher::dispatchOnGaze),
         internal::make_dispatch_c(&dispatcher::dispatchOnStatus),
         internal::make_dispatch_c(&dispatcher::dispatchOnFace),
@@ -97,20 +150,21 @@ int EyeTracker::initialize(const std::string& license_key, const UserStatusOptio
 }
 
 void EyeTracker::deinitialize() {
-  dDeinitEyeTracker(wrapper);
+  dll::SeeSoDeinitEyeTracker(CAST_OBJ(seeso_object));
 }
 
 EyeTracker::~EyeTracker() {
-  dDeleteSeeSo(wrapper);
+  dll::DeleteSeeSo(CAST_OBJ(seeso_object));
+  seeso_object = nullptr;
 }
 
 void EyeTracker::setTrackingFps(int fps) {
-  dSetTrackingFps(wrapper, fps);
+  dll::SeeSoSetTrackingFps(CAST_OBJ(seeso_object), fps);
 }
 
 void EyeTracker::setFaceDistance(int cm) {
   face_distance_mm = cm * 10;
-  dSetFaceDistance(wrapper, static_cast<float>(face_distance_mm));
+  dll::SeeSoSetFaceDistance(CAST_OBJ(seeso_object), face_distance_mm);
 }
 
 int EyeTracker::getFaceDistance() const {
@@ -119,32 +173,39 @@ int EyeTracker::getFaceDistance() const {
 
 void EyeTracker::startCalibration(TargetNum num, CalibrationAccuracy criteria,
                                    float left, float top, float right, float bottom) {
-  dStartCalibration(wrapper, num, static_cast<int>(criteria), left, top, right, bottom);
+  dll::SeeSoStartCalibration(CAST_OBJ(seeso_object), static_cast<int32_t>(num), static_cast<int32_t>(criteria), left, top, right, bottom);
 }
 
 void EyeTracker::startCollectSamples() {
-  dStartCollectSamples(wrapper);
+  dll::SeeSoStartCollectSamples(CAST_OBJ(seeso_object));
 }
 
 void EyeTracker::stopCalibration() {
-  dStopCalibration(wrapper);
+  dll::SeeSoStopCalibration(CAST_OBJ(seeso_object));
 }
 
 void EyeTracker::setCalibrationData(const std::vector<float> &serialData) {
-  dSetCalibrationData(wrapper, serialData.data(), serialData.size() * sizeof(float));
-}
-
-void EyeTracker::setCallbackInterface(CallbackInterface *callback_obj) {
-  callback.setCallbackInterface(callback_obj);
+  dll::SeeSoSetCalibrationData(CAST_OBJ(seeso_object), serialData.data(), static_cast<uint32_t>(serialData.size() * sizeof(float)));
 }
 
 void EyeTracker::removeCallbackInterface() {
-  dRemoveCallbackInterface(wrapper);
-  callback;
+  dll::SeeSoRemoveCallbackInterface(CAST_OBJ(seeso_object));
 }
 
 bool EyeTracker::addFrame(int64_t time_stamp, uint8_t *buffer, int width, int height) {
-  return dAddFrame(wrapper, time_stamp, buffer, width, height);
+  return dll::SeeSoAddFrame(CAST_OBJ(seeso_object), time_stamp, buffer, width, height);
+}
+
+void EyeTracker::setGazeCallback(seeso::IGazeCallback *listener) {
+  callback.setGazeCallback(listener);
+}
+
+void EyeTracker::setCalibrationCallback(seeso::ICalibrationCallback *listener) {
+  callback.setCalibrationCallback(listener);
+}
+
+void EyeTracker::setStatusCallback(seeso::IStatusCallback *listener) {
+  callback.setStatusCallback(listener);
 }
 
 } // namespace seeso

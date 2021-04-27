@@ -6,8 +6,9 @@
 
 #include <opencv2/opencv.hpp>
 #include <memory>
+
 #include "seeso/eye_tracker.h"
-#include "seeso/user_status_option.h"
+#include "seeso/framework/user_status_option.h"
 #include "seeso/util/display.h"
 #include "seeso/util/coord_converter.h"
 
@@ -37,17 +38,11 @@ int main() {
   printDisplays(displays);
   auto& main_display = displays[0];
 
-  std::unique_ptr<std::remove_pointer_t<HINSTANCE>, decltype(&FreeLibrary)>
-      hGetProcIDDLL = {LoadLibrary("seeso_core.dll"), FreeLibrary};
-  if (!hGetProcIDDLL) {
-    std::cerr << "could not load the dynamic library seeso.dll"
-                 " (Error code: " << GetLastError() << '\n';
-    return EXIT_FAILURE;
-  }
+  seeso::global_init();
 
   // load library
-  auto eye_tracker = std::make_unique<seeso::EyeTracker>(hGetProcIDDLL.get());
-  std::cout << "SeeSo Version: " << eye_tracker->getVersion() << std::endl;
+  auto eye_tracker = std::make_unique<seeso::EyeTracker>();
+  std::cout << "SeeSo Version: " << seeso::getVersionStr() << std::endl;
 
   // authenticate
   const char* license_key = "PUT YOUR LICENSE KEY HERE";
@@ -66,8 +61,13 @@ int main() {
 
   // set callback
   auto callback = Callback(main_display);
+  seeso::IStatusCallback* ptr = &callback;
+
+
   // use callback in eyetracker.
-  eye_tracker->setCallbackInterface(&callback);
+  eye_tracker->setGazeCallback(&callback);
+  eye_tracker->setCalibrationCallback(&callback);
+  eye_tracker->setStatusCallback(&callback);
 
   // opencv camera example
   int camera_index = 0;
@@ -106,9 +106,6 @@ int main() {
   }
   view->closeWindow();
 
-  // free dll after eye_tracker is destroyed
-  eye_tracker.reset();
-  hGetProcIDDLL.reset();
 
   return EXIT_SUCCESS;
 }
