@@ -10,7 +10,7 @@
 
 namespace seeso {
 
-template<typename T> struct DFunction;
+template<typename T> struct DLLFunction;
 
 /** @brief dll function wrapper
  *
@@ -18,16 +18,19 @@ template<typename T> struct DFunction;
  * @tparam Args     argument types
  */
 template<typename R, typename ...Args>
-class DFunction<R(Args...)> {
+class DLLFunction<R(Args...)> {
  public:
   using return_type = R;
   using fptr_type = std::add_pointer_t<R WINAPI(Args...)>;
 
-  return_type inline operator()(Args... args)       { return fptr(args...); }
-  return_type inline operator()(Args... args) const { return fptr(args...); }
+  return_type operator()(Args... args)       { return fptr(args...); }
+  return_type operator()(Args... args) const { return fptr(args...); }
 
-  void inline setFuncPtr(fptr_type ptr) { fptr = ptr;             }
-  void inline setFuncPtr(FARPROC ptr)   { fptr = (fptr_type)ptr;  }
+  void setFuncPtr(fptr_type ptr) { fptr = ptr;             }
+  void setFuncPtr(FARPROC ptr)   { fptr = (fptr_type)ptr;  }
+
+  bool operator == (std::nullptr_t) const { return fptr == nullptr; }
+  bool operator != (std::nullptr_t) const { return fptr != nullptr; }
 
  private:
   fptr_type fptr = nullptr;

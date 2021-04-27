@@ -2,18 +2,16 @@
 // Created by cosge on 2021-03-24.
 //
 
+#ifndef SEESO_EYE_TRACKER_H_
+#define SEESO_EYE_TRACKER_H_
+
 #include <vector>
 #include <string>
+
 #include "seeso/dll_function.h"
-
-//#include "window-callback.h"
-
-#ifndef UNTITLED1_EYE_TRACKER_H
-#define UNTITLED1_EYE_TRACKER_H
-
-#include <string>
-#include <vector>
 #include "seeso/callback_interface.h"
+#include "seeso/core_callback.h"
+#include "seeso/user_status_option.h"
 #include "seeso/values.h"
 
 namespace seeso {
@@ -29,7 +27,7 @@ class EyeTracker {
   ~EyeTracker();
 
   // init SeeSo object
-  int initialize(const std::string& license_key, const std::vector<int> &statusOptions);
+  int initialize(const std::string& license_key, const UserStatusOption &userStatusOption);
   // destroy SeeSo object
   void deinitialize();
 
@@ -39,6 +37,7 @@ class EyeTracker {
 
   // set listener
   void setCallbackInterface(CallbackInterface* callback_obj);
+
   // remove listener
   void removeCallbackInterface();
 
@@ -68,40 +67,44 @@ class EyeTracker {
   void setCalibrationData(const std::vector<float> &serialData);
 
  private:
+  using dispatcher = internal::CallbackDispatcher<CoreCallback>;
 
   int face_distance_mm = 600; // mm
 
+  CoreCallback callback;
+
   /** DLL functions **/
-  DFunction<const char*()> dGetVersion;
+  DLLFunction<const char*()> dGetVersion;
 
   struct SeeSo {};
   SeeSo* wrapper = nullptr;
 
-  DFunction<SeeSo*(const char*, size_t, float, int32_t, int32_t, const int32_t*, int32_t)> dCreateSeeSo;
-  DFunction<void(SeeSo*)> dDeleteSeeSo;
+  DLLFunction<SeeSo*(const char*, size_t)> dCreateSeeSo;
+  DLLFunction<void(SeeSo*)> dDeleteSeeSo;
 
-  DFunction<int(SeeSo*)> dDeinitEyeTracker;
-  DFunction<int(SeeSo*, int)> dSetTrackingFps;
-  DFunction<int(SeeSo*, float)> dSetCameraDistanceZ;
-  DFunction<int(SeeSo*, float, float, float, float)> dSetCalibrationRegion;
-  DFunction<int(SeeSo*, int, int)> dStartCalibration;
-  DFunction<int(SeeSo*)> dStartCollectSamples;
-  DFunction<int(SeeSo*)> dStopCalibration;
-  DFunction<int(SeeSo*, const float* data, size_t size)> dSetCalibrationData;
-  DFunction<int(SeeSo*, void *callback_obj,
-                void(*on_gaze           )(void*, uint64_t, float, float, float, float, int32_t, int32_t),
-                void(*on_status         )(void*, int32_t, uint64_t, const float*, int32_t),
-                void(*on_face           )(void*, int32_t, uint64_t, const float*, int32_t),
-                void(*calib_next_point  )(void*, float, float),
-                void(*calib_progress    )(void*, float),
-                void(*calib_finish      )(void*, const float*, int32_t))> dSetCallbackInterface;
-  DFunction<int(SeeSo*)> dRemoveCallbackInterface;
-  DFunction<int(SeeSo*, int64_t, uint8_t*, int32_t, int32_t)> dAddFrame;
-  DFunction<int(SeeSo*)> dGetAuthorizationResult;
+  DLLFunction<int(SeeSo*, float, int32_t, int32_t, const int32_t*, uint32_t)> dInitEyeTracker;
+  DLLFunction<int(SeeSo*)> dDeinitEyeTracker;
+  DLLFunction<int(SeeSo*, int32_t)> dSetTrackingFps;
+  DLLFunction<int(SeeSo*, int32_t)> dSetFaceDistance;
+//  DLLFunction<int(SeeSo*, float, float, float, float)> dSetCalibrationRegion;
+  DLLFunction<int(SeeSo*, int32_t, int32_t, float, float, float, float)> dStartCalibration;
+  DLLFunction<int(SeeSo*)> dStartCollectSamples;
+  DLLFunction<int(SeeSo*)> dStopCalibration;
+  DLLFunction<int(SeeSo*, const float* data, size_t size)> dSetCalibrationData;
+  DLLFunction<int(SeeSo*, void *callback_obj,
+                  internal::dispatch_c_t<decltype(&dispatcher::dispatchOnGaze)> on_gaze,
+                  internal::dispatch_c_t<decltype(&dispatcher::dispatchOnStatus)> on_status,
+                  internal::dispatch_c_t<decltype(&dispatcher::dispatchOnFace)> on_face,
+                  internal::dispatch_c_t<decltype(&dispatcher::dispatchOnCalibrationNextPoint)> calib_next_point,
+                  internal::dispatch_c_t<decltype(&dispatcher::dispatchOnCalibrationProgress)> calib_progress,
+                  internal::dispatch_c_t<decltype(&dispatcher::dispatchOnCalibrationFinished)> calib_finish)> dSetCallbackInterface;
+  DLLFunction<int(SeeSo*)> dRemoveCallbackInterface;
+  DLLFunction<int(SeeSo*, int64_t, uint8_t*, int32_t, int32_t)> dAddFrame;
+  DLLFunction<int(SeeSo*)> dGetAuthorizationResult;
 };
 
 
 } // namespace seeso
 
 
-#endif //UNTITLED1_EYE_TRACKER_H
+#endif //SEESO_EYE_TRACKER_H_
