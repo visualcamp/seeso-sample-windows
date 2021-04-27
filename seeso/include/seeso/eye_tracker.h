@@ -27,7 +27,7 @@ class EyeTracker {
   ~EyeTracker();
 
   // init SeeSo object
-  int initialize(const std::string& license_key, UserStatusOption &userStatusOption);
+  int initialize(const std::string& license_key, const UserStatusOption &userStatusOption);
   // destroy SeeSo object
   void deinitialize();
 

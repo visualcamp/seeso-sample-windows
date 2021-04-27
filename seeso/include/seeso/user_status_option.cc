@@ -6,13 +6,6 @@
 
 namespace seeso {
 
-
-UserStatusOption::UserStatusOption() {
-  isUseAttention = false;
-  isUseBlink = false;
-  isUseDrowsiness = false;
-}
-
 void UserStatusOption::setUseAttention(bool isUseAttention) {
   this->isUseAttention = isUseAttention;
 }
@@ -25,15 +18,15 @@ void UserStatusOption::setUseDrowsiness(bool isUseDrowsiness) {
   this->isUseDrowsiness = isUseDrowsiness;
 }
 
-bool UserStatusOption::getUseAttention() {
+bool UserStatusOption::getUseAttention() const {
   return isUseAttention;
 }
 
-bool UserStatusOption::getUseBlink() {
+bool UserStatusOption::getUseBlink() const {
   return isUseBlink;
 }
 
-bool UserStatusOption::getUseDrowsiness() {
+bool UserStatusOption::getUseDrowsiness() const {
   return isUseDrowsiness;
 }
 

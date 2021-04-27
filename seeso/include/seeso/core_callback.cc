@@ -3,11 +3,6 @@
 
 namespace seeso {
 
-
-CoreCallback::CoreCallback() {
- 
-}
-
 void CoreCallback::OnGaze(uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
                           int movement_duration, seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state) {
   if (callback != nullptr) {
@@ -34,26 +29,14 @@ void CoreCallback::OnStatus(uint64_t timestamp, std::vector<float> data) {
     }
 
     if (isUseDrowsiness) {
-      bool isDrowsiness = false;
-      if (drowsiness >= 1.0f) {
-        isDrowsiness = true;
-      }
+      bool isDrowsiness = drowsiness >= 1.0f;
       callback->OnDrowsiness(timestamp, isDrowsiness);
     }
 
     if (isUseBlink) {
-      bool isBlinkLeft = false;
-      if (blinkL >= 1.0f) {
-        isBlinkLeft = true;
-      }
-      bool isBlinkRight = false;
-      if (blinkR >= 1.0f) {
-        isBlinkRight = true;
-      }
-      bool isBlink = false;
-      if (blink >= 1.0f) {
-        isBlink = true;
-      }
+      bool isBlinkLeft = blinkL >= 1.0f;
+      bool isBlinkRight = blinkR >= 1.0f;
+      bool isBlink = blink >= 1.0f;
       callback->OnBlink(timestamp, isBlinkLeft, isBlinkRight, isBlink, EAR);
     } 
   }

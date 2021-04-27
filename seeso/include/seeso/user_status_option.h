@@ -11,15 +11,13 @@ namespace seeso {
 
 class UserStatusOption {
  public:
-   explicit UserStatusOption();
-
    void setUseAttention(bool isUseAttention);
    void setUseBlink(bool isUseBlink);
    void setUseDrowsiness(bool isUseDrowsiness);
 
-   bool getUseAttention();
-   bool getUseBlink();
-   bool getUseDrowsiness();
+   bool getUseAttention() const;
+   bool getUseBlink() const;
+   bool getUseDrowsiness() const;
 
 private:
   int isUseAttention = false;

@@ -17,8 +17,6 @@ namespace seeso {
 
 class CoreCallback : private internal::CallbackDispatcher<CoreCallback> {
  public:
-  explicit CoreCallback();
-
   void OnGaze(uint64_t timestamp, float x, float y, float fixation_x, float fixation_y,
     int movement_duration, seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state);
 
