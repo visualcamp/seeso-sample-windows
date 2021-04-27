@@ -18,7 +18,6 @@ class IStatusCallback {
   IStatusCallback() = default;
   virtual ~IStatusCallback() = default;
 
-
   /** Attention Status Callback
    *
    * @param timestamp          timestamp (passed by EyeTracker::AddFrame())

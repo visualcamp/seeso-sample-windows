@@ -10,12 +10,13 @@ namespace seeso {
 /** experimental feature! not available yet */
 
 class IFaceCallback {
+ protected:
+  IFaceCallback(const IFaceCallback&) = default;
+  IFaceCallback& operator = (const IFaceCallback&) = default;
+
  public:
   IFaceCallback() = default;
   virtual ~IFaceCallback() = default;
-
-  IFaceCallback(const IFaceCallback&) = delete;
-  IFaceCallback& operator = (const IFaceCallback&) = delete;
 
   virtual void OnLandmark() = 0;
   virtual void OnRegion() = 0;

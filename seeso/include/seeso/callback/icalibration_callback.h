@@ -18,7 +18,6 @@ class ICalibrationCallback {
   ICalibrationCallback() = default;
   virtual ~ICalibrationCallback() = default;
 
-
   /** Calibration Progress Callback
    * @brief called during each calibration point(s)
    *
