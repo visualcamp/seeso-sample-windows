@@ -61,6 +61,9 @@ class EyeTracker {
    */
   bool addFrame(int64_t time_stamp, uint8_t *buffer, int width, int height);
 
+  // set target region bound
+  void setTargetBoundRegion(float left, float top, float right, float bottom);
+
   // Calibration
   void startCalibration(TargetNum num, CalibrationAccuracy criteria,
                          float left, float top, float right, float bottom);

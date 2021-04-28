@@ -55,6 +55,8 @@ LIBRARY_API int SeeSoSetFixationCount(SeeSoObject* obj, uint32_t count);
 
 LIBRARY_API int SeeSoSetFilterType(SeeSoObject* obj, int32_t type);
 
+LIBRARY_API int SeeSoSetTargetBoundRegion(SeeSoObject* obj, float left, float top, float right, float bottom);
+
 LIBRARY_API int SeeSoStartCalibration(SeeSoObject* obj, int32_t mode, int32_t criteria, float left, float top, float right, float bottom);
 
 LIBRARY_API int SeeSoStartCollectSamples(SeeSoObject* obj);

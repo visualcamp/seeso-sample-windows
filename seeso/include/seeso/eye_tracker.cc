@@ -53,6 +53,9 @@ DLLFunction<decltype(SeeSoSetTrackingFps)>          SeeSoSetTrackingFps;
 DLLFunction<decltype(SeeSoSetFaceDistance)>         SeeSoSetFaceDistance;
 DLLFunction<decltype(SeeSoSetFixationCount)>        SeeSoSetFixationCount;
 DLLFunction<decltype(SeeSoSetFilterType)>           SeeSoSetFilterType;
+
+DLLFunction<decltype(SeeSoSetTargetBoundRegion)>    SeeSoSetTargetBoundRegion;
+
 DLLFunction<decltype(SeeSoStartCalibration)>        SeeSoStartCalibration;
 DLLFunction<decltype(SeeSoStartCollectSamples)>     SeeSoStartCollectSamples;
 DLLFunction<decltype(SeeSoStopCalibration)>         SeeSoStopCalibration;
@@ -82,6 +85,8 @@ void global_init(const char* file) {
   SET_DLL_SEESO_FUNCTION(procIDDLL, DeinitEyeTracker);
   SET_DLL_SEESO_FUNCTION(procIDDLL, SetTrackingFps);
   SET_DLL_SEESO_FUNCTION(procIDDLL, SetFaceDistance);
+
+  SET_DLL_SEESO_FUNCTION(procIDDLL, SetTargetBoundRegion);
 
   SET_DLL_SEESO_FUNCTION(procIDDLL, StartCalibration);
   SET_DLL_SEESO_FUNCTION(procIDDLL, StartCollectSamples);
@@ -169,6 +174,10 @@ void EyeTracker::setFaceDistance(int cm) {
 
 int EyeTracker::getFaceDistance() const {
   return face_distance_mm / 10;
+}
+
+void EyeTracker::setTargetBoundRegion(float left, float top, float right, float bottom) {
+  dll::SeeSoSetTargetBoundRegion(CAST_OBJ(seeso_object), left, top, right, bottom);
 }
 
 void EyeTracker::startCalibration(TargetNum num, CalibrationAccuracy criteria,

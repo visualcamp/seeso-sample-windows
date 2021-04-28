@@ -63,7 +63,6 @@ int main() {
   auto callback = Callback(main_display);
   seeso::IStatusCallback* ptr = &callback;
 
-
   // use callback in eyetracker.
   eye_tracker->setGazeCallback(&callback);
   eye_tracker->setCalibrationCallback(&callback);
@@ -83,8 +82,12 @@ int main() {
   cv::Mat frame, input;
   const char* window_name = "seesosample";
   auto view = std::make_shared<seeso::View>(1280, 960, window_name);
+
   // use view instance when the callback is called.
   callback.registerView(view);
+
+  // set status region Bound
+  eye_tracker->setTargetBoundRegion(0.0f, 0.0f, static_cast<float>(main_display.widthPx), static_cast<float>(main_display.heightPx));
 
   for(;;) {
     video >> frame;
@@ -98,6 +101,7 @@ int main() {
 
     // pass video frame. frame is an element for drawing the view.
     view->setFrame(frame);
+
     // Since we have all the elements, draw 'seesosample' window.
     int key = view->draw();
     if (key == 27) {
