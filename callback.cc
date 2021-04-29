@@ -11,9 +11,9 @@ void Callback::OnGaze(uint64_t timestamp, float x, float y,
       // Get the left top position of the 'seesosample' window
       auto winPos = wdu.getWindowPosition(view->getWindowName());
       // Convert the gaze xy point to a position on the screen.
-      auto gazeOnScreenPos = pc.cameraToScreen(x, y);
+      auto gazeOnScreenPos = pc.cameraToScreen<float>(x, y);
       // Convert the gazeOnScreenPos to the value in the 'seesosample' window.
-      auto gazePoint = pc.screenToWindow(gazeOnScreenPos, winPos);
+      auto gazePoint = pc.screenToWindow<float>(gazeOnScreenPos, winPos);
       std::cout << "gazePoint: " << gazePoint.first << ", " << gazePoint.second << std::endl;
       // Pass gazePoint. gazePoint is element for drawing the seesosample window.
       view->setPoint(gazePoint.first, gazePoint.second);
