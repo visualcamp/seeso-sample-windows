@@ -61,8 +61,10 @@ int main() {
 
   // Initialization check
   auto isInitTracker = eye_tracker->isTrackerInitialized();
-  std::cout << "Tracker Initialized: " << isInitTracker << std::endl;
-    
+  if (isInitTracker) {
+    std::cout << "Tracker Initialized" << std::endl;
+  }
+
   // set face distance
   eye_tracker->setFaceDistance(60);
 
