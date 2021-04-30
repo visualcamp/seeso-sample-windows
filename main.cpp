@@ -96,7 +96,10 @@ int main() {
   callback.registerView(view);
 
   // set status region Bound
-  eye_tracker->setTargetBoundRegion(0.0f, 0.0f, static_cast<float>(main_display.widthPx), static_cast<float>(main_display.heightPx));
+  seeso::CoordConverter pc = seeso::CoordConverter(main_display);
+  auto lt = pc.screenToCamera<float>(0.0f, 0.0f);
+  auto rb = pc.screenToCamera<float>(static_cast<float>(main_display.widthPx), static_cast<float>(main_display.heightPx));
+  eye_tracker->setTargetBoundRegion(lt.first, lt.second, rb.first, rb.second);
 
   for(;;) {
     video >> frame;
