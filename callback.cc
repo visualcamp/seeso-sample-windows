@@ -14,12 +14,12 @@ void Callback::OnGaze(uint64_t timestamp, float x, float y,
       auto gazeOnScreenPos = pc.cameraToScreen<float>(x, y);
       // Convert the gazeOnScreenPos to the value in the 'seesosample' window.
       auto gazePoint = pc.screenToWindow<float>(gazeOnScreenPos, winPos);
-      //std::cout << "gazePoint: " << gazePoint.first << ", " << gazePoint.second << std::endl;
+      std::cout << "gazePoint: " << gazePoint.first << ", " << gazePoint.second << std::endl;
       // Pass gazePoint. gazePoint is element for drawing the seesosample window.
       view->setPoint(gazePoint.first, gazePoint.second);
     }
   } else {
-   // std::cout << "OnGaze not found: " << std::endl;
+    std::cout << "OnGaze not found: " << std::endl;
   }
 }
 
@@ -28,12 +28,12 @@ void Callback::OnAttention(uint64_t timestamp, float score) {
 }
 
 void Callback::OnBlink(uint64_t timestamp, bool isBlinkLeft, bool isBlinkRight, bool isBlink, float eyeOpenness) {
- // std::cout << "Blink: " << isBlink << ", " << isBlinkLeft << ", " << isBlinkRight << std::endl;
-  //std::cout << "EyeOpenness: " << eyeOpenness << std::endl;
+  std::cout << "Blink: " << isBlink << ", " << isBlinkLeft << ", " << isBlinkRight << std::endl;
+  std::cout << "EyeOpenness: " << eyeOpenness << std::endl;
 }
 
 void Callback::OnDrowsiness(uint64_t timestamp, bool isDrowsiness) {
- // std::cout << "Drowsiness: " << isDrowsiness << std::endl;
+  std::cout << "Drowsiness: " << isDrowsiness << std::endl;
 }
 
 void Callback::OnCalibrationProgress(float progress) {
