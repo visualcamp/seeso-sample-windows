@@ -8,7 +8,7 @@
 
 #include "seeso/callback/igaze_callback.h"
 #include "seeso/callback/icalibration_callback.h"
-#include "seeso/callback/istatus_callback.h"
+#include "seeso/callback/iuser_status_callback.h"
 #include "seeso/util/display.h"
 #include "seeso/util/coord_converter.h"
 
@@ -20,7 +20,7 @@
 class Callback :
     public seeso::IGazeCallback,
     public seeso::ICalibrationCallback,
-    public seeso::IStatusCallback
+    public seeso::IUserStatusCallback
 {
  public:
   explicit Callback(const seeso::DisplayInfo &display);

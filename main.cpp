@@ -70,12 +70,12 @@ int main() {
 
   // set callback
   auto callback = Callback(main_display);
-  seeso::IStatusCallback* ptr = &callback;
+  seeso::IUserStatusCallback* ptr = &callback;
 
   // use callback in eyetracker.
   eye_tracker->setGazeCallback(&callback);
   eye_tracker->setCalibrationCallback(&callback);
-  eye_tracker->setStatusCallback(&callback);
+  eye_tracker->setUserStatusCallback(&callback);
 
   // opencv camera example
   int camera_index = 0;
