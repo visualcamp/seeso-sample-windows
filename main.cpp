@@ -29,15 +29,16 @@ void printDisplays(const std::vector<seeso::DisplayInfo>& displays) {
 }
 
 int main() {
-  auto displays = seeso::getDisplayLists();
+  const auto displays = seeso::getDisplayLists();
   if(displays.empty()) {
     std::cerr << "Cannot find display\n";
     return EXIT_FAILURE;
   }
 
   printDisplays(displays);
-  auto& main_display = displays[0];
+  const auto& main_display = displays[0];
 
+  // initialize seeso library
   seeso::global_init();
 
   // load library
@@ -60,8 +61,7 @@ int main() {
   }
 
   // Initialization check
-  auto isInitTracker = eye_tracker->isTrackerInitialized();
-  if (isInitTracker) {
+  if (eye_tracker->isTrackerInitialized()) {
     std::cout << "Tracker Initialized" << std::endl;
   }
 
@@ -69,8 +69,7 @@ int main() {
   eye_tracker->setFaceDistance(60);
 
   // set callback
-  auto callback = Callback(main_display);
-  seeso::IUserStatusCallback* ptr = &callback;
+  Callback callback(main_display);
 
   // use callback in eyetracker.
   eye_tracker->setGazeCallback(&callback);
@@ -97,9 +96,9 @@ int main() {
 
   // set status region Bound
   seeso::CoordConverter pc = seeso::CoordConverter(main_display);
-  auto lt = pc.screenToCamera<float>(0.0f, 0.0f);
-  auto rb = pc.screenToCamera<float>(static_cast<float>(main_display.widthPx), static_cast<float>(main_display.heightPx));
-  eye_tracker->setTargetBoundRegion(lt.first, lt.second, rb.first, rb.second);
+  auto lt = pc.screenToCamera(seeso::Point<float>(0, 0));
+  auto rb = pc.screenToCamera(seeso::Point<float>(main_display.widthPx, main_display.heightPx));
+  eye_tracker->setTargetBoundRegion(lt.x, lt.y, rb.x, rb.y);
 
   for(;;) {
     video >> frame;
