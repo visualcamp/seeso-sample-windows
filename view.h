@@ -16,11 +16,17 @@ namespace seeso {
 class View {
 public:
   View(int width, int height, std::string windowName);
+
   void setPoint(long x, long y);
   void setFrame(cv::Mat frame);
+
   int draw();
+
   void closeWindow();
-  std::string getWindowName();
+
+  std::string& getWindowName();
+  const std::string& getWindowName() const;
+
 private:
   std::string windowName;
   cv::Point point;
