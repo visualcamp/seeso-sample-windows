@@ -27,7 +27,7 @@ class Callback :
   void OnGaze(uint64_t timestamp, float x, float y,
               seeso::TrackingState tracking_state, seeso::EyeMovementState eye_movement_state) override;
     
-  void OnAttention(uint64_t timestamp, float score) override;
+  void OnAttention(uint64_t timestampBegin, uint64_t timestampEnd, float score) override;
   void OnBlink(uint64_t timestamp, bool isBlinkLeft, bool isBlinkRight, bool isBlink, float eyeOpenness) override;
   void OnDrowsiness(uint64_t timestamp, bool isDrowsiness) override;
 
