@@ -76,6 +76,9 @@ int main() {
   eye_tracker->setCalibrationCallback(&callback);
   eye_tracker->setUserStatusCallback(&callback);
 
+  // set UserStaus Attention Interval
+  eye_tracker->setAttentionInterval(30);
+
   // opencv camera example
   int camera_index = 0;
   cv::VideoCapture video(camera_index);
