@@ -49,9 +49,9 @@ int main() {
   const char* license_key = "PUT YOUR LICENSE KEY HERE";
 
   auto userStatusOption = seeso::UserStatusOption();;
-  userStatusOption.setUseAttention(true);
-  userStatusOption.setUseBlink(true);
-  userStatusOption.setUseDrowsiness(true);
+  userStatusOption.useAttention();
+  userStatusOption.useBlink();
+  userStatusOption.useDrowsiness();
 
   auto code = eye_tracker->initialize(license_key, userStatusOption);
   if(code != 0) {
@@ -75,6 +75,9 @@ int main() {
   eye_tracker->setGazeCallback(&callback);
   eye_tracker->setCalibrationCallback(&callback);
   eye_tracker->setUserStatusCallback(&callback);
+
+  // set UserStaus Attention Interval
+  eye_tracker->setAttentionInterval(30);
 
   // opencv camera example
   int camera_index = 0;

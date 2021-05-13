@@ -32,7 +32,7 @@ void Callback::OnGaze(uint64_t timestamp,
   }
 }
 
-void Callback::OnAttention(uint64_t timestamp, float score) {
+void Callback::OnAttention(uint64_t timestampBegin, uint64_t timestampEnd, float score) {
   std::cout << "Attention: " << score << std::endl;
 }
 
