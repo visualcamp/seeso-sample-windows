@@ -29,9 +29,12 @@ void View::closeWindow() {
   cv::destroyWindow(windowName);
 }
 
-std::string View::getWindowName() {
+std::string& View::getWindowName() {
   return windowName;
 }
 
+const std::string& View::getWindowName() const {
+  return windowName;
+}
 
 }

@@ -6,8 +6,9 @@
 
 #include <opencv2/opencv.hpp>
 #include <memory>
+
 #include "seeso/eye_tracker.h"
-#include "seeso/user_status_option.h"
+#include "seeso/framework/user_status_option.h"
 #include "seeso/util/display.h"
 #include "seeso/util/coord_converter.h"
 
@@ -28,34 +29,29 @@ void printDisplays(const std::vector<seeso::DisplayInfo>& displays) {
 }
 
 int main() {
-  auto displays = seeso::getDisplayLists();
+  const auto displays = seeso::getDisplayLists();
   if(displays.empty()) {
     std::cerr << "Cannot find display\n";
     return EXIT_FAILURE;
   }
 
   printDisplays(displays);
-  auto& main_display = displays[0];
+  const auto& main_display = displays[0];
 
-  std::unique_ptr<std::remove_pointer_t<HINSTANCE>, decltype(&FreeLibrary)>
-      hGetProcIDDLL = {LoadLibrary("seeso_core.dll"), FreeLibrary};
-  if (!hGetProcIDDLL) {
-    std::cerr << "could not load the dynamic library seeso.dll"
-                 " (Error code: " << GetLastError() << '\n';
-    return EXIT_FAILURE;
-  }
+  // initialize seeso library
+  seeso::global_init();
 
   // load library
-  auto eye_tracker = std::make_unique<seeso::EyeTracker>(hGetProcIDDLL.get());
-  std::cout << "SeeSo Version: " << eye_tracker->getVersion() << std::endl;
+  auto eye_tracker = std::make_unique<seeso::EyeTracker>();
+  std::cout << "SeeSo Version: " << seeso::getVersionStr() << std::endl;
 
   // authenticate
   const char* license_key = "PUT YOUR LICENSE KEY HERE";
 
   auto userStatusOption = seeso::UserStatusOption();;
-  userStatusOption.setUseAttention(true);
-  userStatusOption.setUseBlink(true);
-  userStatusOption.setUseDrowsiness(true);
+  userStatusOption.useAttention();
+  userStatusOption.useBlink();
+  userStatusOption.useDrowsiness();
 
   auto code = eye_tracker->initialize(license_key, userStatusOption);
   if(code != 0) {
@@ -64,10 +60,24 @@ int main() {
     return EXIT_FAILURE;
   }
 
+  // Initialization check
+  if (eye_tracker->isTrackerInitialized()) {
+    std::cout << "Tracker Initialized" << std::endl;
+  }
+
+  // set face distance
+  eye_tracker->setFaceDistance(60);
+
   // set callback
-  auto callback = Callback(main_display);
+  Callback callback(main_display);
+
   // use callback in eyetracker.
-  eye_tracker->setCallbackInterface(&callback);
+  eye_tracker->setGazeCallback(&callback);
+  eye_tracker->setCalibrationCallback(&callback);
+  eye_tracker->setUserStatusCallback(&callback);
+
+  // set UserStaus Attention Interval
+  eye_tracker->setAttentionInterval(30);
 
   // opencv camera example
   int camera_index = 0;
@@ -83,8 +93,15 @@ int main() {
   cv::Mat frame, input;
   const char* window_name = "seesosample";
   auto view = std::make_shared<seeso::View>(1280, 960, window_name);
+
   // use view instance when the callback is called.
   callback.registerView(view);
+
+  // set status region Bound
+  seeso::CoordConverter pc = seeso::CoordConverter(main_display);
+  auto lt = pc.screenToCamera(seeso::Point<float>(0, 0));
+  auto rb = pc.screenToCamera(seeso::Point<float>(main_display.widthPx, main_display.heightPx));
+  eye_tracker->setTargetBoundRegion(lt.x, lt.y, rb.x, rb.y);
 
   for(;;) {
     video >> frame;
@@ -98,6 +115,7 @@ int main() {
 
     // pass video frame. frame is an element for drawing the view.
     view->setFrame(frame);
+
     // Since we have all the elements, draw 'seesosample' window.
     int key = view->draw();
     if (key == 27) {
@@ -106,9 +124,6 @@ int main() {
   }
   view->closeWindow();
 
-  // free dll after eye_tracker is destroyed
-  eye_tracker.reset();
-  hGetProcIDDLL.reset();
 
   return EXIT_SUCCESS;
 }
