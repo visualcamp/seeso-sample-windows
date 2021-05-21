@@ -12,19 +12,16 @@ add_executable(seeso_windows main.cpp
 
 target_link_libraries(seeso_windows PUBLIC opencv seeso)
 
+# copy script will work only if cmake version >= 3.5
 
-# dll copy
-set(SEESO_BIN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/seeso/bin)
-set(OPENCV_BIN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/opencv/lib/x64/vc15/bin)
-
-# this script will work only if cmake version >= 3.5
+# copy seeso dlls
 add_custom_command(TARGET seeso_windows PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-        "${SEESO_BIN_DIR}/seeso/seeso_core.dll"
-        "${SEESO_BIN_DIR}/third-parties/libcrypto-1_1-x64.dll"
-        "${SEESO_BIN_DIR}/third-parties/libcurl.dll"
-        "${SEESO_BIN_DIR}/third-parties/libssl-1_1-x64.dll"
-        "${OPENCV_BIN_DIR}/opencv_ffmpeg410_64.dll"
-        "${OPENCV_BIN_DIR}/opencv_world410.dll"
-        "${OPENCV_BIN_DIR}/opencv_world410d.dll"
+        ${SEESO_DLL}
+        $<TARGET_FILE_DIR:seeso_windows>)
+
+#copy opencv dlls
+add_custom_command(TARGET seeso_windows PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${OPENCV_DLL}
         $<TARGET_FILE_DIR:seeso_windows>)
