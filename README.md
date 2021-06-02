@@ -14,7 +14,7 @@
 ## Sample Demo Requirements
 * [SeeSo Windows SDK](https://console.seeso.io/)
 * Must be issued a license key in [SeeSo Console](https://console.seeso.io/)
-* Windows 10
+* Windows
 * C++14
 * [CMake](https://cmake.org/download/) >= 3.5
 * [OpenCV](https://opencv.org/releases/)
