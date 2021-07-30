@@ -30,7 +30,7 @@ In 2021, SeeSo was recognized for its innovative technology and won GLOMO Award 
 * Must be issued a license key in [SeeSo Console](https://console.seeso.io/)
 
 ## Setting License Key
-* Get a license key from https://console.seeso.io and copy your key to [`main.cpp`](main.cpp)
+* Get a license key from https://console.seeso.io and copy your key to [`main.cpp`](main.cpp#L49)
    ```
    // authenticate
    const char* license_key = "PUT YOUR LICENSE KEY HERE";
