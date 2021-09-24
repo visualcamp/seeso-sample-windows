@@ -23,7 +23,7 @@ void TrackerManager::OnGaze(uint64_t timestamp,
   x -= static_cast<float>(winPos.x);
   y -= static_cast<float>(winPos.y);
 
-  on_gaze_(static_cast<int>(x) - winPos.x, static_cast<int>(y) - winPos.y, true);
+  on_gaze_(static_cast<int>(x), static_cast<int>(y), true);
 }
 
 void TrackerManager::OnAttention(uint64_t timestampBegin, uint64_t timestampEnd, float score) {
