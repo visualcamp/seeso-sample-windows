@@ -163,17 +163,15 @@ class signal<R(Args...)> {
     auto it = slot_list_.begin();
 
     while (it != slot_list_.end()) {
-      lck.unlock();
-
       if ((*it)->expired()) {
-        lck.lock();
         it = slot_list_.erase(it);
         continue;
       }
 
+      lck.unlock();
       (**it)(args...);
-      lck.lock();
       ++it;
+      lck.lock();
     }
   }
 
