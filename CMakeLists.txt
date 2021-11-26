@@ -9,7 +9,8 @@ add_subdirectory(seeso)
 add_executable(seeso_windows main.cpp
         tracker_manager.cc
         camera_thread.cc
-        view.cc)
+        view.cc
+        priority_mutex.cc)
 
 target_link_libraries(seeso_windows PUBLIC opencv seeso)
 
