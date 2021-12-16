@@ -7,7 +7,7 @@
 <div align="center">
     <h1>SeeSo Windows Sample</h1>
     <a href="https://github.com/visualcamp/seeso-sample-windows/releases" alt="release">
-        <img src="https://img.shields.io/badge/version-3.0.0-blue" />
+        <img src="https://img.shields.io/badge/version-3.0.1-blue" />
     </a>
 </div>
 
@@ -15,10 +15,12 @@
 * [SeeSo Windows SDK](https://console.seeso.io/)
 * Must be issued a license key in [SeeSo Console](https://console.seeso.io/)
 * Windows
-* C++ >= 11
-* [CMake](https://cmake.org/download/) >= 3.5
+* C++ 11 or later
+* [CMake](https://cmake.org/download/) 3.5 or later
 * [OpenCV](https://opencv.org/releases/)
 
+Notes
+* Visual Studio 2015 or below is not tested. 
 
 ## Build
 1. Sign in to https://seeso.io and download a SeeSo Windows SDK from https://console.seeso.io
