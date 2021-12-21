@@ -13,8 +13,15 @@
 #include "opencv2/opencv.hpp"
 
 #include "drawables.h"
+#include "priority_mutex.h"
 
 namespace sample {
+
+using read_lock_guard = std::lock_guard<typename PriorityMutex::high_mutex_type>;
+using read_unique_lock = std::unique_lock<typename PriorityMutex::high_mutex_type>;
+
+using write_lock_guard = std::lock_guard<typename PriorityMutex::low_mutex_type>;
+using write_unique_lock = std::unique_lock<typename PriorityMutex::low_mutex_type>;
 
 class View {
  public:
@@ -23,7 +30,7 @@ class View {
   void setPoint(int x, int y);
   void setFrame(const cv::Mat& frame);
 
-  int draw(int wait_ms = 20);
+  int draw(int wait_ms = 10);
 
   void closeWindow();
 
@@ -35,6 +42,8 @@ class View {
   drawables::Image frame_;
   std::vector<drawables::Text> desc_;
 
+  auto& write_mutex() { return mutex_.low(); }
+
  private:
   void initElements();
 
@@ -42,8 +51,11 @@ class View {
   void drawElements();
   int drawWindow(int wait_ms);
 
+  auto& read_mutex() { return mutex_.high(); }
+
   std::string window_name_;
   cv::Mat background_;
+  mutable PriorityMutex mutex_;
 };
 
 } // namespace sample
