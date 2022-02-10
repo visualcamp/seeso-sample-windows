@@ -12,8 +12,8 @@
 </div>
 
 ## Sample Demo Requirements
-* [SeeSo Windows SDK](https://console.seeso.io/)
-* Must be issued a license key in [SeeSo Console](https://console.seeso.io/)
+* [SeeSo Windows SDK](https://manage.seeso.io/)
+* Must be issued a license key in [SeeSo Manage](https://manage.seeso.io/)
 * Windows
 * C++ 11 or later
 * [CMake](https://cmake.org/download/) 3.5 or later
@@ -23,9 +23,9 @@ Notes
 * Visual Studio 2015 or below is not tested. 
 
 ## Build
-1. Sign in to https://seeso.io and download a SeeSo Windows SDK from https://console.seeso.io
+1. Sign in to https://seeso.io and download a SeeSo Windows SDK from https://manage.seeso.io
 2. Copy the `seeso` folder to this project.
-3. Get a license key from https://console.seeso.io and copy your key to `main.cpp`
+3. Get a license key from https://manage.seeso.io and copy your key to `main.cpp`
    ```
    // authenticate
    const char* license_key = "PUT YOUR LICENSE KEY HERE"; // paste your key here
