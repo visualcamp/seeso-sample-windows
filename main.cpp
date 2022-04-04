@@ -48,12 +48,10 @@ int main() {
   auto tracker_manager_ptr = tracker_manager.get();
 
   // Set additional feature(user status) options
-  auto userStatusOption = seeso::UserStatusOption().useAttention()
-                                                   .useBlink()
-                                                   .useDrowsiness();
+  SeeSoStatusModuleOptions user_status_options{kSeeSoTrue, kSeeSoTrue, kSeeSoTrue};
 
   // Authenticate and initialize GazeTracker
-  auto code = tracker_manager->initialize(license_key, userStatusOption);
+  auto code = tracker_manager->initialize(license_key, user_status_options);
   if (!code)
     return EXIT_FAILURE;
 
@@ -62,6 +60,11 @@ int main() {
   // This assumes that the camera is located at the top-center of the main display
   const auto& main_display = displays[0];
   tracker_manager->setDefaultCameraToDisplayConverter(main_display);
+
+  // Set the whole monitor region as a ROI that determines user attention.
+  if (user_status_options.use_attention) {
+    tracker_manager->setWholeScreenToAttentionRegion(main_display);
+  }
 
 
   // Create and run OpenCV camera in concurrent thread
@@ -81,6 +84,7 @@ int main() {
 
   // Show gaze point according to the value. Red means the SeeSo cannot inference the gaze point
   tracker_manager->on_gaze_.connect([=](int x, int y, bool valid) {
+    sample::write_lock_guard lock(view_ptr->write_mutex());
     if (valid) {
       view_ptr->gaze_point_.center = {x, y};
       view_ptr->gaze_point_.color = {0, 220, 220};
@@ -92,12 +96,14 @@ int main() {
 
   // Change UI elements state while calibrating
   tracker_manager->on_calib_start_.connect([=]() {
+    sample::write_lock_guard lock(view_ptr->write_mutex());
     view_ptr->calibration_desc_.visible = true;
     for (auto& desc : view_ptr->desc_)
       desc.visible = false;
     view_ptr->frame_.visible = false;
   }, view);
   tracker_manager->on_calib_finish_.connect([=](const std::vector<float>& data) {
+    sample::write_lock_guard lock(view_ptr->write_mutex());
     view_ptr->calibration_desc_.visible = false;
     view_ptr->calibration_point_.visible = false;
     for (auto& desc : view_ptr->desc_)
@@ -105,6 +111,7 @@ int main() {
     view_ptr->frame_.visible = true;
   }, view);
   tracker_manager->on_calib_next_point_.connect([=](int x, int y) {
+    sample::write_lock_guard lock(view_ptr->write_mutex());
     view_ptr->calibration_point_.center = {x, y};
     view_ptr->calibration_point_.visible = true;
     view_ptr->calibration_desc_.visible = false;
@@ -117,7 +124,8 @@ int main() {
   /// Add camera frame listener
   // 1. draw the preview to the view
   camera_thread.on_frame_.connect([=](const cv::Mat& frame) {
-    view_ptr->frame_.buffer = frame;
+    sample::write_lock_guard lock(view_ptr->write_mutex());
+    cv::resize(frame, view_ptr->frame_.buffer, {640, 480});
   }, view);
 
   // 2. Pass the frame and the current timestamp in milliseconds to the SeeSo SDK
@@ -134,13 +142,14 @@ int main() {
 
   while (true) {
     // Draw a window.
-    int key = view->draw();
+    int key = view->draw(10);
 
     if (key == 27/* ESC */) {
       break;
     } else if (key == 'c' || key == 'C') {
       tracker_manager->startFullWindowCalibration(
-          seeso::TargetNum::FIVE, seeso::CalibrationAccuracy::DEFAULT);
+          kSeeSoCalibrationPointFive,
+          kSeeSoCalibrationAccuracyDefault);
     }
   }
   view->closeWindow();
