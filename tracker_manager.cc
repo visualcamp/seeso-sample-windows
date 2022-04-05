@@ -2,16 +2,26 @@
 
 #include <iostream>
 #include <utility>
+#include <vector>
 
 #include "seeso/util/display.h"
 
 namespace sample {
 
+static std::vector<float> getWindowRectWithPadding(const char* window_name, int padding = 30) {
+  const auto window_rect = seeso::getWindowRect(window_name);
+  return {
+    static_cast<float>(window_rect.x + padding),
+    static_cast<float>(window_rect.y + padding),
+    static_cast<float>(window_rect.x + window_rect.width - padding),
+    static_cast<float>(window_rect.y + window_rect.height - padding)};
+}
+
 void TrackerManager::OnGaze(uint64_t timestamp,
                             float x, float y,
-                            seeso::TrackingState tracking_state,
-                            seeso::EyeMovementState eye_movement_state) {
-  if (tracking_state != seeso::TrackingState::SUCCESS) {
+                            SeeSoTrackingState tracking_state,
+                            SeeSoEyeMovementState eye_movement_state) {
+  if (tracking_state != kSeeSoTrackingSuccess) {
     on_gaze_(0, 0, false);
     return;
   }
@@ -27,7 +37,7 @@ void TrackerManager::OnGaze(uint64_t timestamp,
 }
 
 void TrackerManager::OnAttention(uint64_t timestampBegin, uint64_t timestampEnd, float score) {
-//  std::cout << "Attention: " << score << '\n';
+  std::cout << "Attention: " << timestampBegin << " " << timestampEnd << " " << score << '\n';
 }
 
 void TrackerManager::OnBlink(uint64_t timestamp, bool isBlinkLeft, bool isBlinkRight, bool isBlink, float eyeOpenness) {
@@ -57,7 +67,7 @@ void TrackerManager::OnCalibrationFinish(const std::vector<float> &calib_data) {
   calibrating_.store(false, std::memory_order_release);
 }
 
-bool TrackerManager::initialize(const std::string &license_key, const seeso::UserStatusOption &status_option) {
+bool TrackerManager::initialize(const std::string &license_key, const SeeSoStatusModuleOptions& status_option) {
   const auto code = gaze_tracker_.initialize(license_key, status_option);
   if (code != 0) {
     std::cerr << "Failed to authenticate (code: " << code << " )\n";
@@ -68,7 +78,7 @@ bool TrackerManager::initialize(const std::string &license_key, const seeso::Use
   gaze_tracker_.setFaceDistance(60);
 
   // Set additional options
-  gaze_tracker_.setAttentionInterval(30);
+  gaze_tracker_.setAttentionInterval(10);
 
   // Attach callbacks to seeso::GazeTracker
   gaze_tracker_.setGazeCallback(this);
@@ -88,8 +98,7 @@ bool TrackerManager::addFrame(std::int64_t timestamp, const cv::Mat &frame) {
   return gaze_tracker_.addFrame(timestamp, frame.data, frame.cols, frame.rows);
 }
 
-void TrackerManager::startFullWindowCalibration(seeso::TargetNum target_num, seeso::CalibrationAccuracy accuracy) {
-  static const auto padding = 30;
+void TrackerManager::startFullWindowCalibration(SeeSoCalibrationPointNum target_num, SeeSoCalibrationAccuracy accuracy) {
   bool expected = false;
   if (!calibrating_.compare_exchange_strong(expected, true))
     return;
@@ -98,14 +107,17 @@ void TrackerManager::startFullWindowCalibration(seeso::TargetNum target_num, see
 
   // Delay start to show description message
   delayed_calibration_ = std::async(std::launch::async, [=]() {
+    // TODO(Tony): Handle force exit
     std::this_thread::sleep_for(std::chrono::seconds(3));
-    const auto window_rect = seeso::getWindowRect(window_name_);
+    const auto window_rect = getWindowRectWithPadding(window_name_.c_str());
     gaze_tracker_.startCalibration(target_num, accuracy,
-                                   static_cast<float>(window_rect.x + padding),
-                                   static_cast<float>(window_rect.y + padding),
-                                   static_cast<float>(window_rect.x + window_rect.width - padding),
-                                   static_cast<float>(window_rect.y + window_rect.height - padding));
+                                   window_rect[0], window_rect[1], window_rect[2], window_rect[3]);
   });
+}
+
+void TrackerManager::setWholeScreenToAttentionRegion(const seeso::DisplayInfo& display_info) {
+  gaze_tracker_.setAttentionRegion(0, 0,
+                             static_cast<float>(display_info.widthPx), static_cast<float>(display_info.heightPx));
 }
 
 } // namespace sample

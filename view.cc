@@ -64,6 +64,8 @@ void View::clearBackground() {
 }
 
 void View::drawElements() {
+  read_lock_guard lock(read_mutex());
+
   drawables::draw_if(frame_, &background_);
   drawables::draw_if(gaze_point_, &background_);
   drawables::draw_if(calibration_point_, &background_);
