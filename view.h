@@ -42,7 +42,7 @@ class View {
   drawables::Image frame_;
   std::vector<drawables::Text> desc_;
 
-  auto& write_mutex() { return mutex_.low(); }
+  PriorityMutex::low_mutex_type& write_mutex() { return mutex_.low(); }
 
  private:
   void initElements();
@@ -51,7 +51,7 @@ class View {
   void drawElements();
   int drawWindow(int wait_ms);
 
-  auto& read_mutex() { return mutex_.high(); }
+  PriorityMutex::high_mutex_type& read_mutex() { return mutex_.high(); }
 
   std::string window_name_;
   cv::Mat background_;
