@@ -170,8 +170,8 @@ class signal<R(Args...)> {
 
       lck.unlock();
       (**it)(args...);
-      lck.lock();
       ++it;
+      lck.lock();
     }
   }
 

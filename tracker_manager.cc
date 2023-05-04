@@ -19,8 +19,6 @@ static std::vector<float> getWindowRectWithPadding(const char* window_name, int 
 
 void TrackerManager::OnGaze(uint64_t timestamp,
                             float x, float y,
-                            float fixation_x, float fixation_y,
-                            float left_openness, float right_openness,
                             SeeSoTrackingState tracking_state,
                             SeeSoEyeMovementState eye_movement_state) {
   if (tracking_state != kSeeSoTrackingSuccess) {
@@ -38,27 +36,13 @@ void TrackerManager::OnGaze(uint64_t timestamp,
   on_gaze_(static_cast<int>(x), static_cast<int>(y), true);
 }
 
-void TrackerManager::OnFace(uint64_t timestamp,
-                            float score,
-                            float left,
-                            float top,
-                            float right,
-                            float bottom,
-                            float pitch,
-                            float yaw,
-                            float roll,
-                            const float *center_xyz,
-                            uint32_t center_xyz_size) {
-  std::cout << "Face Score: " << timestamp << ", " << score << '\n';
-}
-
 void TrackerManager::OnAttention(uint64_t timestampBegin, uint64_t timestampEnd, float score) {
   std::cout << "Attention: " << timestampBegin << " " << timestampEnd << " " << score << '\n';
 }
 
-void TrackerManager::OnBlink(uint64_t timestamp, bool isBlinkLeft, bool isBlinkRight, bool isBlink,
-                             float leftOpenness, float rightOpenness) {
-  std::cout << "Blink: " << leftOpenness << ", " << rightOpenness << ", " << isBlinkLeft <<  ", " << isBlinkRight  <<'\n';
+void TrackerManager::OnBlink(uint64_t timestamp, bool isBlinkLeft, bool isBlinkRight, bool isBlink, float eyeOpenness) {
+//  std::cout << "Blink: " << isBlink << ", " << isBlinkLeft << ", " << isBlinkRight << '\n'
+//            << "EyeOpenness: " << eyeOpenness << '\n';
 }
 
 void TrackerManager::OnDrowsiness(uint64_t timestamp, bool isDrowsiness) {
@@ -98,7 +82,6 @@ bool TrackerManager::initialize(const std::string &license_key, const SeeSoStatu
 
   // Attach callbacks to seeso::GazeTracker
   gaze_tracker_.setGazeCallback(this);
-  gaze_tracker_.setFaceCallback(this);
   gaze_tracker_.setCalibrationCallback(this);
   gaze_tracker_.setUserStatusCallback(this);
 
