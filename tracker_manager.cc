@@ -46,6 +46,7 @@ void TrackerManager::OnFace(uint64_t timestamp,
                             float bottom,
                             float pitch,
                             float yaw,
+                            float roll,
                             const float *center_xyz,
                             uint32_t center_xyz_size) {
   std::cout << "Face Score: " << timestamp << ", " << score << '\n';
@@ -60,8 +61,8 @@ void TrackerManager::OnBlink(uint64_t timestamp, bool isBlinkLeft, bool isBlinkR
   std::cout << "Blink: " << leftOpenness << ", " << rightOpenness << ", " << isBlinkLeft <<  ", " << isBlinkRight  <<'\n';
 }
 
-void TrackerManager::OnDrowsiness(uint64_t timestamp, bool isDrowsiness) {
-//  std::cout << "Drowsiness: " << isDrowsiness << '\n';
+void TrackerManager::OnDrowsiness(uint64_t timestamp, bool isDrowsiness, float intensity) {
+  std::cout << "Drowsiness: " << isDrowsiness << '\n';
 }
 
 void TrackerManager::OnCalibrationProgress(float progress) {

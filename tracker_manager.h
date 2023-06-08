@@ -48,12 +48,12 @@ class TrackerManager :
               float left_openness, float right_openness, SeeSoTrackingState tracking_state,
               SeeSoEyeMovementState eye_movement_state) override;
   void OnFace(uint64_t timestamp, float score, float left, float top, float right, float bottom,
-              float pitch, float yaw, const float * center_xyz, uint32_t center_xyz_size) override;
+              float pitch, float yaw, float roll, const float * center_xyz, uint32_t center_xyz_size) override;
   void OnAttention(uint64_t timestampBegin, uint64_t timestampEnd, float score) override;
   void OnBlink(uint64_t timestamp, bool isBlinkLeft, bool isBlinkRight, bool isBlink,
                float leftOpenness, float rightOpenness) override;
 
-  void OnDrowsiness(uint64_t timestamp, bool isDrowsiness) override;
+  void OnDrowsiness(uint64_t timestamp, bool isDrowsiness, float intensity) override;
 
   void OnCalibrationProgress(float progress) override;
   void OnCalibrationNextPoint(float next_point_x, float next_point_y) override;
