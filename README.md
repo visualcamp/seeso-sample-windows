@@ -7,7 +7,7 @@
 <div align="center">
     <h1>SeeSo Windows Sample(C++)</h1>
     <a href="https://github.com/visualcamp/seeso-sample-windows/releases" alt="release">
-        <img src="https://img.shields.io/badge/version-4.0.0-blue" />
+        <img src="https://img.shields.io/badge/version-4.1.0-blue" />
     </a>
 </div>
 
